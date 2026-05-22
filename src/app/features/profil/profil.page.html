@@ -5,5 +5,15 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <p class="placeholder">Écran « Profil » — à implémenter.</p>
+  <ng-container *ngIf="user$ | async as user; else loading">
+    <h2 class="user-name">{{ user.prenom }} {{ user.nom }}</h2>
+    <p class="user-email">{{ user.email }}</p>
+  </ng-container>
+  <ng-template #loading>
+    <p class="placeholder">Chargement…</p>
+  </ng-template>
+
+  <ion-button expand="block" color="medium" (click)="logout()" class="logout-btn">
+    Se déconnecter
+  </ion-button>
 </ion-content>
