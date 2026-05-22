@@ -14,7 +14,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       // Token invalide/expiré sur une requête authentifiée — purge + redirect login.
       if (error.status === 401 && auth.isAuthenticated) {
         auth.logout();
-        router.navigate(['/auth/login']);
+        router.navigate(['/auth/login'], { replaceUrl: true });
       }
       return throwError(() => error);
     }),
