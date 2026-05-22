@@ -1,0 +1,33 @@
+/* Polices Google Fonts — charte §6.2 du dossier */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* Ionic core */
+@import '@ionic/angular/css/core.css';
+@import '@ionic/angular/css/normalize.css';
+@import '@ionic/angular/css/structure.css';
+@import '@ionic/angular/css/typography.css';
+@import '@ionic/angular/css/display.css';
+
+/* Utils Ionic */
+@import '@ionic/angular/css/padding.css';
+@import '@ionic/angular/css/float-elements.css';
+@import '@ionic/angular/css/text-alignment.css';
+@import '@ionic/angular/css/text-transformation.css';
+@import '@ionic/angular/css/flex-utils.css';
+
+/* Typographie globale alignée sur la charte */
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--surface-offwhite);
+}
+
+h1, h2 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+/* Montants financiers — alignement vertical des chiffres (brief §5.2) */
+.amount {
+  font-variant-numeric: tabular-nums lining-nums;
+}

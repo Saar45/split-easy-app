@@ -1,0 +1,75 @@
+// Charte graphique Split-Easy — dossier §VI / brief §5.
+// Tokens : palette, typo, espacement, rayons, ombres.
+// Les composants ne hardcodent jamais de couleur, uniquement ces variables.
+
+:root {
+  // ----- Brand -----
+  --brand-navy-800: #1E2A4A;
+  --brand-navy-500: #34508A;
+  --brand-gold-400: #C4B882;
+
+  // ----- Earthy (fonds décoratifs uniquement) -----
+  --brand-sage-400: #8E977D;
+  --brand-sage-700: #4A5240;
+
+  // ----- Surfaces -----
+  --surface-offwhite: #FAFAF6;
+  --surface-white: #FFFFFF;
+  --surface-cream: #ECE7D1;
+  --surface-sand: #DBCEA5;
+  --surface-border: #E4E0D6;
+
+  // ----- Texte -----
+  --text-primary: #2A2721;
+  --text-secondary: #5A5548;
+  --text-link: #34508A;
+
+  // ----- Sémantique -----
+  --color-success: #3B7A3E;
+  --color-error: #C44B3F;
+  --color-warning: #C27B1A;
+  --color-info: #3B6D97;
+
+  // ----- Typographie -----
+  --font-heading: 'Lora', serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+
+  // ----- Espacement (grille 4 / 8) -----
+  --space-050: 4px;
+  --space-100: 8px;
+  --space-150: 12px;
+  --space-200: 16px;
+  --space-300: 24px;
+  --space-400: 32px;
+  --space-600: 48px;
+
+  // ----- Rayons -----
+  --radius-badge: 6px;
+  --radius-button: 8px;
+  --radius-card: 12px;
+  --radius-sheet: 16px;
+  --radius-pill: 9999px;
+
+  // ----- Ombres chaudes -----
+  --shadow-rest: 0 2px 4px hsla(30, 20%, 20%, 0.06);
+  --shadow-hover: 0 4px 12px hsla(30, 20%, 20%, 0.08);
+  --shadow-sheet: 0 8px 24px hsla(30, 20%, 20%, 0.10);
+  --shadow-modal: 0 16px 48px hsla(30, 20%, 20%, 0.12);
+
+  // ----- Surcharge Ionic -----
+  --ion-font-family: var(--font-body);
+  --ion-background-color: var(--surface-offwhite);
+  --ion-text-color: var(--text-primary);
+
+  --ion-color-primary: var(--brand-navy-800);
+  --ion-color-primary-rgb: 30, 42, 74;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #19243f;
+  --ion-color-primary-tint: #353e5c;
+
+  --ion-color-success: var(--color-success);
+  --ion-color-danger: var(--color-error);
+  --ion-color-warning: var(--color-warning);
+  --ion-color-tertiary: var(--brand-gold-400);
+}

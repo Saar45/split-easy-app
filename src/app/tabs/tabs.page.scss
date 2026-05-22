@@ -1,0 +1,24 @@
+ion-tab-bar {
+  --background: var(--surface-white);
+  --color: var(--text-secondary);
+  --color-selected: var(--brand-navy-800);
+  border-top: 1px solid var(--surface-border);
+}
+
+// Bouton central [+] : surdimensionné, élévation supérieure (brief §4).
+.tab-button-primary {
+  ion-icon {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    background: var(--brand-navy-800);
+    color: var(--surface-white);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-8px);
+  }
+
+  ion-label {
+    margin-top: -4px;
+  }
+}
