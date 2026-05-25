@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { GroupService } from '../../core/services/group.service';
@@ -10,16 +10,13 @@ import { Group } from '../../core/models/group.model';
   styleUrls: ['./groupes.page.scss'],
   standalone: false,
 })
-export class GroupesPage implements OnInit {
+export class GroupesPage {
   private readonly groupService = inject(GroupService);
   private readonly router = inject(Router);
 
   groups: Group[] = [];
   loading = true;
-
-  ngOnInit(): void {
-    this.loadGroups();
-  }
+  loadError = false;
 
   ionViewWillEnter(): void {
     this.loadGroups();
@@ -27,6 +24,7 @@ export class GroupesPage implements OnInit {
 
   loadGroups(): void {
     this.loading = true;
+    this.loadError = false;
     this.groupService.list().subscribe({
       next: (groups) => {
         this.groups = groups;
@@ -34,6 +32,7 @@ export class GroupesPage implements OnInit {
       },
       error: () => {
         this.loading = false;
+        this.loadError = true;
       },
     });
   }

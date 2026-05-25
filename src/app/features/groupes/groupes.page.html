@@ -10,7 +10,15 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ng-container *ngIf="!loading">
+  <div *ngIf="loadError" class="error-state">
+    <ion-icon name="cloud-offline-outline" class="error-state__icon" aria-hidden="true"></ion-icon>
+    <p class="error-state__text">Impossible de charger les groupes.</p>
+    <ion-button (click)="loadGroups()" class="error-state__retry" aria-label="Réessayer">
+      Réessayer
+    </ion-button>
+  </div>
+
+  <ng-container *ngIf="!loading && !loadError">
     <ng-container *ngIf="groups.length > 0; else emptyState">
       <ion-card
         *ngFor="let group of groups"
