@@ -5,7 +5,6 @@
 
   &__title {
     color: var(--brand-navy-800);
-    font-family: var(--font-body);
     font-weight: 600;
   }
 
@@ -21,9 +20,7 @@
   padding: var(--space-100) 0;
   border-bottom: 1px solid var(--surface-border);
 
-  &:last-child {
-    border-bottom: none;
-  }
+  &:last-child { border-bottom: none; }
 
   &__label {
     color: var(--text-secondary);
@@ -31,10 +28,7 @@
     min-width: 80px;
   }
 
-  &__value {
-    color: var(--text-primary);
-    font-family: var(--font-body);
-  }
+  &__value { color: var(--text-primary); }
 
   &__swatch {
     width: 20px;
@@ -43,6 +37,61 @@
     border: 1px solid var(--surface-border);
     flex-shrink: 0;
   }
+}
+
+.expenses-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-100);
+}
+
+.expenses-title {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.add-expense-btn { --color: var(--brand-navy-500); }
+
+.expenses-spinner {
+  display: block;
+  margin: var(--space-200) auto;
+}
+
+.expenses-list {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  overflow: hidden;
+  margin-bottom: var(--space-300);
+}
+
+.expense-item {
+  --background: var(--surface-white);
+  --detail-icon-color: var(--text-secondary);
+
+  &__desc { color: var(--text-primary); font-weight: 500; }
+  &__meta { color: var(--text-secondary); font-size: 12px; margin-top: var(--space-050); }
+  &__amount { font-variant-numeric: tabular-nums lining-nums; color: var(--brand-navy-800); font-weight: 600; }
+}
+
+.empty-expenses {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-400) var(--space-200);
+  margin-bottom: var(--space-300);
+
+  .empty-icon { font-size: 40px; color: var(--text-secondary); opacity: 0.4; margin-bottom: var(--space-150); }
+  .empty-text { color: var(--text-secondary); font-size: 14px; margin: 0 0 var(--space-200); }
+}
+
+.empty-add-btn {
+  --border-radius: var(--radius-button);
+  --color: var(--brand-navy-800);
+  --border-color: var(--brand-navy-800);
 }
 
 .delete-btn {

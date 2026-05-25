@@ -37,6 +37,59 @@
       </ion-card-content>
     </ion-card>
 
+    <!-- Expenses section -->
+    <div class="expenses-header">
+      <h2 class="expenses-title">Dépenses</h2>
+      <ion-button
+        fill="clear"
+        size="small"
+        (click)="navigateToAddExpense()"
+        aria-label="Ajouter une dépense"
+        class="add-expense-btn"
+      >
+        <ion-icon slot="start" name="add-circle-outline" aria-hidden="true"></ion-icon>
+        Ajouter
+      </ion-button>
+    </div>
+
+    <ion-spinner *ngIf="loadingExpenses" name="crescent" class="expenses-spinner" aria-label="Chargement des dépenses"></ion-spinner>
+
+    <ng-container *ngIf="!loadingExpenses">
+      <ion-list *ngIf="expenses.length > 0" class="expenses-list" aria-label="Liste des dépenses">
+        <ion-item
+          *ngFor="let e of expenses"
+          detail="true"
+          button="true"
+          (click)="navigateToExpense(e)"
+          class="expense-item"
+          [attr.aria-label]="e.description + ', ' + formatAmount(e.montant)"
+        >
+          <ion-label>
+            <h3 class="expense-item__desc">{{ e.description }}</h3>
+            <p class="expense-item__meta">
+              {{ e.payeur.prenom }} · {{ e.date_depense | date:'dd/MM/yyyy' }}
+            </p>
+          </ion-label>
+          <ion-note slot="end" class="expense-item__amount">
+            {{ formatAmount(e.montant) }}
+          </ion-note>
+        </ion-item>
+      </ion-list>
+
+      <div *ngIf="expenses.length === 0" class="empty-expenses" role="status">
+        <ion-icon name="receipt-outline" class="empty-icon" aria-hidden="true"></ion-icon>
+        <p class="empty-text">Aucune dépense pour l'instant.</p>
+        <ion-button
+          fill="outline"
+          (click)="navigateToAddExpense()"
+          aria-label="Ajouter la première dépense"
+          class="empty-add-btn"
+        >
+          Ajouter une dépense
+        </ion-button>
+      </div>
+    </ng-container>
+
     <!-- TODO: expose `role` in GET /api/groups/{id} response to restrict delete to creator -->
     <ion-button
       expand="block"
