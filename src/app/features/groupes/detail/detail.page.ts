@@ -24,6 +24,10 @@ export class DetailGroupPage implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (!Number.isFinite(id) || !Number.isInteger(id) || id <= 0) {
+      this.navigateBackWithToast('Identifiant de groupe invalide.');
+      return;
+    }
     this.groupService.show(id).subscribe({
       next: (g) => {
         this.group = g;
@@ -34,6 +38,17 @@ export class DetailGroupPage implements OnInit {
         this.router.navigate(['/tabs/groupes']);
       },
     });
+  }
+
+  private async navigateBackWithToast(message: string): Promise<void> {
+    const t = await this.toast.create({
+      message,
+      duration: 3000,
+      color: 'danger',
+      position: 'top',
+    });
+    await t.present();
+    this.router.navigate(['/tabs/groupes']);
   }
 
   async confirmDelete(): Promise<void> {
