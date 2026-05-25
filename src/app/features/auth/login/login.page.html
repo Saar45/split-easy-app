@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Connexion</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="auth-wrap">
+    <h1 class="auth-title">Split-Easy</h1>
+    <p class="auth-subtitle">Gérez vos dépenses partagées.</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+      <ion-item>
+        <ion-input
+          label="Email"
+          labelPlacement="floating"
+          type="email"
+          autocomplete="email"
+          formControlName="email"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Mot de passe"
+          labelPlacement="floating"
+          type="password"
+          autocomplete="current-password"
+          formControlName="motDePasse"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-button
+        type="submit"
+        expand="block"
+        [disabled]="submitting"
+        class="auth-submit"
+      >
+        {{ submitting ? 'Connexion…' : 'Se connecter' }}
+      </ion-button>
+    </form>
+
+    <p class="auth-alt">
+      Pas encore de compte ?
+      <a routerLink="/auth/register">S'inscrire</a>
+    </p>
+  </div>
+</ion-content>

@@ -1,0 +1,56 @@
+.auth-wrap {
+  max-width: 420px;
+  margin: 0 auto;
+  padding-top: var(--space-300);
+}
+
+.auth-title {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  color: var(--brand-navy-800);
+  margin: 0;
+}
+
+.auth-subtitle {
+  color: var(--text-secondary);
+  margin: var(--space-100) 0 var(--space-300);
+}
+
+.auth-form ion-item {
+  --background: var(--surface-white);
+  --border-radius: var(--radius-button);
+  margin-bottom: var(--space-200);
+}
+
+.auth-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: -8px 4px var(--space-200);
+}
+
+.cgu-item {
+  --background: transparent;
+  margin-top: var(--space-100);
+
+  ion-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+}
+
+.auth-submit {
+  margin-top: var(--space-300);
+  --border-radius: var(--radius-button);
+}
+
+.auth-alt {
+  text-align: center;
+  margin-top: var(--space-400);
+  color: var(--text-secondary);
+
+  a {
+    color: var(--text-link);
+    font-weight: 600;
+    text-decoration: none;
+  }
+}

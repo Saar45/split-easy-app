@@ -1,4 +1,19 @@
+.user-name {
+  font-family: var(--font-heading);
+  color: var(--brand-navy-800);
+  margin: var(--space-200) 0 var(--space-050);
+}
+
+.user-email {
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-400);
+}
+
 .placeholder {
   color: var(--text-secondary);
-  font-family: var(--font-body);
+}
+
+.logout-btn {
+  margin-top: var(--space-400);
+  --border-radius: var(--radius-button);
 }
