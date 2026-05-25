@@ -36,6 +36,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('../features/profil/profil.module').then((m) => m.ProfilPageModule),
       },
+      {
+        path: 'depenses',
+        loadChildren: () =>
+          import('../features/depenses/depenses.module').then((m) => m.DepensesModule),
+      },
       { path: '', redirectTo: '/tabs/accueil', pathMatch: 'full' },
     ],
   },
