@@ -1,0 +1,80 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" aria-label="Retour">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Créer un groupe</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="form-wrap">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="group-form">
+      <ion-item>
+        <ion-input
+          label="Nom du groupe"
+          labelPlacement="floating"
+          type="text"
+          formControlName="nom"
+          required
+          [attr.aria-describedby]="form.get('nom')?.invalid && form.get('nom')?.touched ? 'nom-error' : null"
+        ></ion-input>
+      </ion-item>
+      <p
+        id="nom-error"
+        class="field-error"
+        *ngIf="form.get('nom')?.invalid && form.get('nom')?.touched"
+      >
+        <ng-container *ngIf="form.get('nom')?.errors?.['required']">Le nom est requis.</ng-container>
+        <ng-container *ngIf="form.get('nom')?.errors?.['minlength']">Minimum 2 caractères.</ng-container>
+        <ng-container *ngIf="form.get('nom')?.errors?.['maxlength']">Maximum 100 caractères.</ng-container>
+      </p>
+
+      <ion-item>
+        <ion-textarea
+          label="Description (optionnelle)"
+          labelPlacement="floating"
+          formControlName="description"
+          rows="3"
+          [attr.aria-describedby]="form.get('description')?.invalid && form.get('description')?.touched ? 'desc-error' : null"
+        ></ion-textarea>
+      </ion-item>
+      <p
+        id="desc-error"
+        class="field-error"
+        *ngIf="form.get('description')?.invalid && form.get('description')?.touched"
+      >
+        <ng-container *ngIf="form.get('description')?.errors?.['maxlength']">Maximum 255 caractères.</ng-container>
+      </p>
+
+      <ion-item>
+        <ion-input
+          label="Couleur (ex: #1E2A4A)"
+          labelPlacement="floating"
+          type="text"
+          formControlName="couleur"
+          placeholder="#RRGGBB"
+          [attr.aria-describedby]="form.get('couleur')?.invalid && form.get('couleur')?.touched ? 'couleur-error' : null"
+        ></ion-input>
+      </ion-item>
+      <p
+        id="couleur-error"
+        class="field-error"
+        *ngIf="form.get('couleur')?.invalid && form.get('couleur')?.touched"
+      >
+        <ng-container *ngIf="form.get('couleur')?.errors?.['pattern']">Format attendu : #RRGGBB</ng-container>
+      </p>
+
+      <ion-button
+        type="submit"
+        expand="block"
+        [disabled]="submitting"
+        class="form-submit"
+      >
+        {{ submitting ? 'Création…' : 'Créer le groupe' }}
+      </ion-button>
+    </form>
+  </div>
+</ion-content>
