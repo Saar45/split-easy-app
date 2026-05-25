@@ -8,6 +8,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { refreshTokenInterceptor } from './core/interceptors/refresh-token.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 @NgModule({
@@ -15,7 +16,9 @@ import { errorInterceptor } from './core/interceptors/error.interceptor';
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
+    provideHttpClient(
+      withInterceptors([jwtInterceptor, refreshTokenInterceptor, errorInterceptor]),
+    ),
   ],
   bootstrap: [AppComponent],
 })
