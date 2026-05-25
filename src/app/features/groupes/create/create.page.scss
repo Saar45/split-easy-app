@@ -1,0 +1,23 @@
+.form-wrap {
+  max-width: 420px;
+  margin: 0 auto;
+  padding-top: var(--space-200);
+}
+
+.group-form ion-item {
+  --background: var(--surface-white);
+  --border-radius: var(--radius-button);
+  margin-bottom: var(--space-100);
+}
+
+.field-error {
+  color: var(--color-error);
+  font-size: 12px;
+  margin: 0 0 var(--space-150) var(--space-200);
+  font-family: var(--font-body);
+}
+
+.form-submit {
+  margin-top: var(--space-300);
+  --border-radius: var(--radius-button);
+}

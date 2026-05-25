@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" aria-label="Retour">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ group?.nom ?? 'Groupe' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-spinner *ngIf="loading" name="crescent" class="page-spinner" aria-label="Chargement"></ion-spinner>
+
+  <ng-container *ngIf="!loading && group">
+    <ion-card class="detail-card">
+      <ion-card-header>
+        <ion-card-title class="detail-card__title">{{ group.nom }}</ion-card-title>
+        <ion-card-subtitle *ngIf="group.description" class="detail-card__desc">
+          {{ group.description }}
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="detail-row">
+          <span class="detail-row__label">Statut</span>
+          <span class="detail-row__value">{{ group.statut }}</span>
+        </div>
+        <div class="detail-row" *ngIf="group.couleur">
+          <span class="detail-row__label">Couleur</span>
+          <span class="detail-row__swatch" [style.background]="group.couleur" aria-label="Couleur du groupe {{ group.couleur }}"></span>
+          <span class="detail-row__value">{{ group.couleur }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-row__label">Créé le</span>
+          <span class="detail-row__value">{{ group.date_creation | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- TODO: expose `role` in GET /api/groups/{id} response to restrict delete to creator -->
+    <ion-button
+      expand="block"
+      color="danger"
+      (click)="confirmDelete()"
+      [disabled]="deleting"
+      class="delete-btn"
+      aria-label="Supprimer le groupe"
+    >
+      {{ deleting ? 'Suppression…' : 'Supprimer le groupe' }}
+    </ion-button>
+  </ng-container>
+</ion-content>

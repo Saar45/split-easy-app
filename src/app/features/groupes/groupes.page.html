@@ -1,9 +1,59 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Groupes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToCreate()" aria-label="Créer un groupe">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <p class="placeholder">Écran « Groupes » — à implémenter.</p>
+  <div *ngIf="loadError" class="error-state">
+    <ion-icon name="cloud-offline-outline" class="error-state__icon" aria-hidden="true"></ion-icon>
+    <p class="error-state__text">Impossible de charger les groupes.</p>
+    <ion-button (click)="loadGroups()" class="error-state__retry" aria-label="Réessayer">
+      Réessayer
+    </ion-button>
+  </div>
+
+  <ng-container *ngIf="!loading && !loadError">
+    <ng-container *ngIf="groups.length > 0; else emptyState">
+      <ion-card
+        *ngFor="let group of groups"
+        class="group-card"
+        (click)="goToDetail(group.id)"
+        button
+      >
+        <ion-card-header>
+          <ion-card-title class="group-card__title">{{ group.nom }}</ion-card-title>
+          <ion-card-subtitle *ngIf="group.description" class="group-card__desc">
+            {{ group.description }}
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <span class="group-card__statut">{{ group.statut }}</span>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <ion-icon name="people-outline" class="empty-state__icon" aria-hidden="true"></ion-icon>
+        <p class="empty-state__text">Aucun groupe pour l'instant.</p>
+        <ion-button (click)="goToCreate()" class="empty-state__cta">
+          Créer un groupe
+        </ion-button>
+      </div>
+    </ng-template>
+  </ng-container>
+
+  <ion-spinner *ngIf="loading" name="crescent" class="page-spinner" aria-label="Chargement"></ion-spinner>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="goToCreate()" aria-label="Créer un groupe">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

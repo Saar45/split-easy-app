@@ -1,0 +1,56 @@
+.detail-card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  margin-bottom: var(--space-300);
+
+  &__title {
+    color: var(--brand-navy-800);
+    font-family: var(--font-body);
+    font-weight: 600;
+  }
+
+  &__desc {
+    color: var(--text-secondary);
+  }
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-100);
+  padding: var(--space-100) 0;
+  border-bottom: 1px solid var(--surface-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__label {
+    color: var(--text-secondary);
+    font-size: 13px;
+    min-width: 80px;
+  }
+
+  &__value {
+    color: var(--text-primary);
+    font-family: var(--font-body);
+  }
+
+  &__swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-badge);
+    border: 1px solid var(--surface-border);
+    flex-shrink: 0;
+  }
+}
+
+.delete-btn {
+  --border-radius: var(--radius-button);
+  margin-top: var(--space-200);
+}
+
+.page-spinner {
+  display: block;
+  margin: var(--space-600) auto 0;
+}
