@@ -3,7 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 
 import { GroupService } from '../../../core/services/group.service';
+import { ExpenseService } from '../../../core/services/expense.service';
 import { Group } from '../../../core/models/group.model';
+import { Expense } from '../../../core/models/expense.model';
 
 @Component({
   selector: 'app-detail-group',
@@ -15,12 +17,22 @@ export class DetailGroupPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly groupService = inject(GroupService);
+  private readonly expenseService = inject(ExpenseService);
   private readonly alert = inject(AlertController);
   private readonly toast = inject(ToastController);
 
   group: Group | null = null;
+  expenses: Expense[] = [];
   loading = true;
+  loadingExpenses = false;
+  expensesError = false;
   deleting = false;
+
+  private readonly amountFormatter = new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+  });
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -32,12 +44,37 @@ export class DetailGroupPage implements OnInit {
       next: (g) => {
         this.group = g;
         this.loading = false;
+        this.loadExpenses(g.id);
       },
       error: () => {
         this.loading = false;
         this.router.navigate(['/tabs/groupes']);
       },
     });
+  }
+
+  private loadExpenses(groupId: number): void {
+    this.loadingExpenses = true;
+    this.expensesError = false;
+    this.expenseService.listForGroup(groupId).subscribe({
+      next: (list) => {
+        this.expenses = list;
+        this.loadingExpenses = false;
+      },
+      error: () => {
+        this.loadingExpenses = false;
+        this.expensesError = true;
+      },
+    });
+  }
+
+  navigateToExpense(expense: Expense): void {
+    this.router.navigate(['/tabs/depenses/detail', expense.id]);
+  }
+
+  navigateToAddExpense(): void {
+    if (!this.group) return;
+    this.router.navigate(['/tabs/depenses/add', this.group.id]);
   }
 
   private async navigateBackWithToast(message: string): Promise<void> {
@@ -83,6 +120,10 @@ export class DetailGroupPage implements OnInit {
         await t.present();
       },
     });
+  }
+
+  formatAmount(n: number): string {
+    return this.amountFormatter.format(n);
   }
 
   goBack(): void {

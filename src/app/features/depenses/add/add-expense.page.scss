@@ -1,0 +1,89 @@
+.form-item {
+  --background: var(--surface-white);
+  --border-radius: var(--radius-card);
+  --padding-start: var(--space-200);
+  --padding-end: var(--space-200);
+  --padding-top: var(--space-150);
+  --padding-bottom: var(--space-150);
+  box-shadow: var(--shadow-rest);
+  border-radius: var(--radius-card);
+  margin-bottom: var(--space-200);
+}
+
+.form-label {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: var(--space-050);
+}
+
+.form-input {
+  color: var(--text-primary);
+
+  &--amount {
+    font-variant-numeric: tabular-nums lining-nums;
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
+
+.error-note {
+  font-size: 12px;
+  padding-top: var(--space-050);
+}
+
+.category-section {
+  margin-bottom: var(--space-200);
+}
+
+.category-label {
+  padding: 0 0 var(--space-100) 0;
+}
+
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-100);
+}
+
+.category-chip {
+  --background: var(--surface-white);
+  --color: var(--text-secondary);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-rest);
+  cursor: pointer;
+
+  &.chip--selected {
+    --background: var(--brand-navy-800);
+    --color: #ffffff;
+    border-color: var(--brand-navy-800);
+  }
+
+  .chip-icon {
+    margin-right: var(--space-050);
+  }
+}
+
+.todo-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-100);
+  padding: var(--space-150) var(--space-200);
+  background: var(--surface-cream);
+  border-radius: var(--radius-card);
+  margin-bottom: var(--space-200);
+  font-size: 12px;
+  color: var(--text-secondary);
+
+  ion-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--color-info);
+  }
+}
+
+.submit-btn {
+  --border-radius: var(--radius-button);
+  margin-top: var(--space-200);
+}
