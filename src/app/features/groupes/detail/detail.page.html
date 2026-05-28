@@ -55,7 +55,12 @@
     <ion-spinner *ngIf="loadingExpenses" name="crescent" class="expenses-spinner" aria-label="Chargement des dépenses"></ion-spinner>
 
     <ng-container *ngIf="!loadingExpenses">
-      <ion-list *ngIf="expenses.length > 0" class="expenses-list" aria-label="Liste des dépenses">
+      <div *ngIf="expensesError" class="expenses-error" role="alert">
+        <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+        Impossible de charger les dépenses.
+      </div>
+
+      <ion-list *ngIf="!expensesError && expenses.length > 0" class="expenses-list" aria-label="Liste des dépenses">
         <ion-item
           *ngFor="let e of expenses"
           detail="true"
@@ -76,7 +81,7 @@
         </ion-item>
       </ion-list>
 
-      <div *ngIf="expenses.length === 0" class="empty-expenses" role="status">
+      <div *ngIf="!expensesError && expenses.length === 0" class="empty-expenses" role="status">
         <ion-icon name="receipt-outline" class="empty-icon" aria-hidden="true"></ion-icon>
         <p class="empty-text">Aucune dépense pour l'instant.</p>
         <ion-button

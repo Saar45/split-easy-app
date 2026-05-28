@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { firstValueFrom } from 'rxjs';
 
 import { ExpenseService } from '../../../core/services/expense.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -43,7 +44,11 @@ export class AddExpensePage implements OnInit {
   }
 
   private todayIso(): string {
-    return new Date().toISOString().slice(0, 10);
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 
   async submit(): Promise<void> {
@@ -52,8 +57,18 @@ export class AddExpensePage implements OnInit {
       return;
     }
 
-    const currentUser = this.authService['currentUser$'].value as { id: number } | null;
-    const beneficiaire_ids: number[] = currentUser ? [currentUser.id] : [];
+    const currentUser = await firstValueFrom(this.authService.user$);
+    if (!currentUser) {
+      const t = await this.toast.create({
+        message: 'Session expirée, veuillez vous reconnecter.',
+        duration: 3000,
+        color: 'danger',
+        position: 'top',
+      });
+      await t.present();
+      return;
+    }
+    const beneficiaire_ids: number[] = [currentUser.id];
 
     this.submitting = true;
     const raw = this.form.value;

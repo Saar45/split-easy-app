@@ -25,7 +25,14 @@ export class DetailGroupPage implements OnInit {
   expenses: Expense[] = [];
   loading = true;
   loadingExpenses = false;
+  expensesError = false;
   deleting = false;
+
+  private readonly amountFormatter = new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+  });
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -48,6 +55,7 @@ export class DetailGroupPage implements OnInit {
 
   private loadExpenses(groupId: number): void {
     this.loadingExpenses = true;
+    this.expensesError = false;
     this.expenseService.listForGroup(groupId).subscribe({
       next: (list) => {
         this.expenses = list;
@@ -55,6 +63,7 @@ export class DetailGroupPage implements OnInit {
       },
       error: () => {
         this.loadingExpenses = false;
+        this.expensesError = true;
       },
     });
   }
@@ -114,11 +123,7 @@ export class DetailGroupPage implements OnInit {
   }
 
   formatAmount(n: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 2,
-    }).format(n);
+    return this.amountFormatter.format(n);
   }
 
   goBack(): void {

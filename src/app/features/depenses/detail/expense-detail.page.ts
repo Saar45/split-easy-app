@@ -20,6 +20,12 @@ export class ExpenseDetailPage implements OnInit {
   expense: Expense | null = null;
   loading = true;
 
+  private readonly amountFormatter = new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+  });
+
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isFinite(id) || !Number.isInteger(id) || id <= 0) {
@@ -50,11 +56,7 @@ export class ExpenseDetailPage implements OnInit {
   }
 
   formatAmount(n: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 2,
-    }).format(n);
+    return this.amountFormatter.format(n);
   }
 
   goBack(): void {
