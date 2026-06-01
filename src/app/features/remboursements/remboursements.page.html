@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Remboursements</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-segment [value]="tab" (ionChange)="setTab($any($event).detail.value)" aria-label="Filtrer">
+    <ion-segment-button value="en_cours">
+      <ion-label>En cours</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="historique">
+      <ion-label>Historique</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div *ngIf="loading" class="state-block">
+    <ion-spinner aria-label="Chargement"></ion-spinner>
+  </div>
+
+  <div *ngIf="!loading && hasError" class="state-block error-block" role="alert">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+    <p>Impossible de charger vos remboursements.</p>
+  </div>
+
+  <ng-container *ngIf="!loading && !hasError">
+    <div *ngIf="filtered().length === 0" class="empty-block">
+      <ion-icon name="checkmark-done-outline" aria-hidden="true"></ion-icon>
+      <p *ngIf="tab === 'en_cours'">Aucun remboursement en cours.</p>
+      <p *ngIf="tab === 'historique'">Aucun remboursement passé.</p>
+    </div>
+
+    <ul class="rb-list">
+      <li *ngFor="let rb of filtered()" class="rb-item"
+          [class.rb--proposed]="rb.statut === 'propose'"
+          [class.rb--valide]="rb.statut === 'valide'"
+          [class.rb--conteste]="rb.statut === 'conteste'"
+          [class.rb--annule]="rb.statut === 'annule'">
+        <div class="rb-header">
+          <span class="rb-line">{{ fullName(rb.debiteur) }} <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon> {{ fullName(rb.crediteur) }}</span>
+          <span class="rb-amount">{{ formatAmount(rb.montant) }}</span>
+        </div>
+        <div class="rb-meta">
+          <span class="rb-statut">{{ statutLabel(rb.statut) }}</span>
+          <span class="rb-date">{{ rb.date_creation | date:'dd/MM/yyyy' }}</span>
+        </div>
+
+        <div *ngIf="rb.statut === 'propose'" class="rb-actions">
+          <ion-button *ngIf="isCreditor(rb)" size="small" color="success" (click)="confirmAccept(rb)" aria-label="Accepter">
+            Accepter
+          </ion-button>
+          <ion-button *ngIf="isCreditor(rb)" size="small" color="danger" fill="outline" (click)="confirmReject(rb)" aria-label="Refuser">
+            Refuser
+          </ion-button>
+          <ion-button *ngIf="isDebtor(rb)" size="small" fill="outline" (click)="confirmCancel(rb)" aria-label="Annuler">
+            Annuler
+          </ion-button>
+        </div>
+      </li>
+    </ul>
+  </ng-container>
+</ion-content>

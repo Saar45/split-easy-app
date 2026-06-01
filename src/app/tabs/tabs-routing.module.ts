@@ -41,6 +41,13 @@ const routes: Routes = [
         loadChildren: () =>
           import('../features/depenses/depenses.module').then((m) => m.DepensesModule),
       },
+      {
+        path: 'remboursements',
+        loadChildren: () =>
+          import('../features/remboursements/remboursements.module').then(
+            (m) => m.RemboursementsPageModule,
+          ),
+      },
       { path: '', redirectTo: '/tabs/accueil', pathMatch: 'full' },
     ],
   },
