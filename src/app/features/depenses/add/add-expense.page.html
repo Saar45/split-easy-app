@@ -80,6 +80,25 @@
       </ion-note>
     </div>
 
+    <div class="beneficiaires-section">
+      <p class="form-label">Bénéficiaires</p>
+      <div class="beneficiaires-chips" role="group" aria-label="Choisir les bénéficiaires">
+        <ion-chip
+          *ngFor="let m of availableMembers"
+          [class.chip--selected]="isBeneficiaire(m.id)"
+          (click)="toggleBeneficiaire(m.id)"
+          [attr.aria-pressed]="isBeneficiaire(m.id)"
+          [attr.aria-label]="m.prenom + ' ' + m.nom"
+          class="beneficiaire-chip"
+        >
+          <ion-label>{{ m.prenom }} {{ m.nom }}</ion-label>
+        </ion-chip>
+      </div>
+      <ion-note *ngIf="beneficiaireIds.length === 0" color="danger" class="error-note" role="alert">
+        Sélectionnez au moins un bénéficiaire.
+      </ion-note>
+    </div>
+
     <div class="mode-section">
       <p class="form-label">Mode de répartition</p>
       <ion-segment [value]="mode" (ionChange)="setMode($any($event).detail.value)" aria-label="Mode de répartition">
@@ -112,11 +131,6 @@
         </ion-item>
         <ion-note *ngIf="partsError" color="danger" class="error-note" role="alert">{{ partsError }}</ion-note>
       </div>
-    </div>
-
-    <div class="todo-note">
-      <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
-      <span>Les bénéficiaires sont limités à votre compte tant que l'endpoint GET /api/groups/:id/members n'est pas exposé.</span>
     </div>
 
     <ion-button
