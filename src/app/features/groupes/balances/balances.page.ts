@@ -1,8 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
+import { firstValueFrom } from 'rxjs';
 
 import { BalanceService } from '../../../core/services/balance.service';
+import { RemboursementService } from '../../../core/services/remboursement.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { GroupBalances, Solde, RemboursementSuggestion } from '../../../core/models/balance.model';
 
 @Component({
@@ -15,7 +18,12 @@ export class BalancesPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly balanceService = inject(BalanceService);
+  private readonly remboursementService = inject(RemboursementService);
+  private readonly authService = inject(AuthService);
+  private readonly alert = inject(AlertController);
   private readonly toast = inject(ToastController);
+
+  currentUserId = 0;
 
   groupId = 0;
   loading = true;
@@ -30,14 +38,73 @@ export class BalancesPage implements OnInit {
     minimumFractionDigits: 2,
   });
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isFinite(id) || !Number.isInteger(id) || id <= 0) {
       this.router.navigate(['/tabs/groupes']);
       return;
     }
     this.groupId = id;
+
+    let u = await firstValueFrom(this.authService.user$);
+    if (!u) {
+      // Fallback : si le BehaviorSubject n'a pas encore reçu le user (premier
+      // chargement post-login), on déclenche un fetch explicite.
+      try {
+        u = await firstValueFrom(this.authService.fetchCurrentUser());
+      } catch {
+        u = null;
+      }
+    }
+    this.currentUserId = u?.id ?? 0;
     this.load();
+  }
+
+  // Affiche la proposition uniquement quand le current user est le débiteur suggéré.
+  canPropose(r: RemboursementSuggestion): boolean {
+    return r.from.id === this.currentUserId;
+  }
+
+  async confirmPropose(r: RemboursementSuggestion): Promise<void> {
+    const a = await this.alert.create({
+      header: 'Proposer un remboursement',
+      message: `Proposer ${this.formatAbs(r.montant)} à ${this.fullName(r.to)} ?`,
+      buttons: [
+        { text: 'Annuler', role: 'cancel' },
+        { text: 'Proposer', role: 'confirm', handler: () => this.doPropose(r) },
+      ],
+    });
+    await a.present();
+  }
+
+  private doPropose(r: RemboursementSuggestion): void {
+    const montant = Number(r.montant);
+    if (!Number.isFinite(montant) || montant <= 0) {
+      return;
+    }
+    this.remboursementService
+      .propose(this.groupId, { id_crediteur: r.to.id, montant })
+      .subscribe({
+        next: async () => {
+          const t = await this.toast.create({
+            message: 'Remboursement proposé.',
+            duration: 2500,
+            color: 'success',
+            position: 'top',
+          });
+          await t.present();
+          this.router.navigate(['/tabs/remboursements']);
+        },
+        error: async () => {
+          const t = await this.toast.create({
+            message: 'Impossible de proposer ce remboursement.',
+            duration: 3000,
+            color: 'danger',
+            position: 'top',
+          });
+          await t.present();
+        },
+      });
   }
 
   private load(): void {

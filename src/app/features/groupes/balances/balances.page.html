@@ -41,12 +41,23 @@
 
       <ul *ngIf="remboursements().length > 0" class="reimb-list">
         <li *ngFor="let r of remboursements()" class="reimb-item">
-          <div class="reimb-line">
-            <span class="reimb-from">{{ fullName(r.from) }}</span>
-            <ion-icon name="arrow-forward" aria-hidden="true" class="reimb-arrow"></ion-icon>
-            <span class="reimb-to">{{ fullName(r.to) }}</span>
+          <div class="reimb-row">
+            <div class="reimb-line">
+              <span class="reimb-from">{{ fullName(r.from) }}</span>
+              <ion-icon name="arrow-forward" aria-hidden="true" class="reimb-arrow"></ion-icon>
+              <span class="reimb-to">{{ fullName(r.to) }}</span>
+            </div>
+            <span class="reimb-amount">{{ formatAbs(r.montant) }}</span>
           </div>
-          <span class="reimb-amount">{{ formatAbs(r.montant) }}</span>
+          <ion-button
+            *ngIf="canPropose(r)"
+            size="small"
+            (click)="confirmPropose(r)"
+            aria-label="Proposer un remboursement"
+            class="reimb-action"
+          >
+            Proposer un remboursement
+          </ion-button>
         </li>
       </ul>
 
