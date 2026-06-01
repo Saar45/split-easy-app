@@ -48,6 +48,13 @@ const routes: Routes = [
             (m) => m.RemboursementsPageModule,
           ),
       },
+      {
+        path: 'invitations',
+        loadChildren: () =>
+          import('../features/invitations/invitations.module').then(
+            (m) => m.InvitationsPageModule,
+          ),
+      },
       { path: '', redirectTo: '/tabs/accueil', pathMatch: 'full' },
     ],
   },

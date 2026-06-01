@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Invitations</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-spinner *ngIf="loading" name="crescent" class="page-spinner" aria-label="Chargement"></ion-spinner>
+
+  <div *ngIf="!loading && hasError" class="error-state" role="alert">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+    Impossible de charger les invitations.
+  </div>
+
+  <ng-container *ngIf="!loading && !hasError">
+    <div *ngIf="list.length === 0" class="empty-state" role="status">
+      <ion-icon name="mail-open-outline" class="empty-icon" aria-hidden="true"></ion-icon>
+      <p class="empty-text">Aucune invitation en attente.</p>
+    </div>
+
+    <ion-list *ngIf="list.length > 0" class="invitations-list" aria-label="Invitations en attente">
+      <ion-card
+        *ngFor="let inv of list"
+        class="invitation-card"
+        [attr.aria-label]="'Invitation à rejoindre ' + inv.groupe.nom"
+      >
+        <ion-card-header>
+          <ion-card-title class="invitation-card__title">{{ inv.groupe.nom }}</ion-card-title>
+          <ion-card-subtitle class="invitation-card__meta">
+            Invitation reçue le {{ inv.date_invitation | date:'dd/MM/yyyy' }}
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p class="invitation-card__expires" *ngIf="inv.date_expiration">
+            Expire le {{ inv.date_expiration | date:'dd/MM/yyyy' }}
+          </p>
+          <div class="invitation-card__actions">
+            <ion-button
+              fill="solid"
+              color="success"
+              (click)="confirmAccept(inv)"
+              aria-label="Accepter l'invitation"
+            >
+              Rejoindre
+            </ion-button>
+            <ion-button
+              fill="outline"
+              color="medium"
+              (click)="confirmRefuse(inv)"
+              aria-label="Refuser l'invitation"
+            >
+              Refuser
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ion-list>
+  </ng-container>
+</ion-content>
