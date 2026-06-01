@@ -80,9 +80,43 @@
       </ion-note>
     </div>
 
+    <div class="mode-section">
+      <p class="form-label">Mode de répartition</p>
+      <ion-segment [value]="mode" (ionChange)="setMode($any($event).detail.value)" aria-label="Mode de répartition">
+        <ion-segment-button value="equitable" aria-label="Équitable">
+          <ion-label>Équitable</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="personnalisee" aria-label="Personnalisée">
+          <ion-label>Montants</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="pourcentage" aria-label="Pourcentages">
+          <ion-label>%</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <div *ngIf="mode !== 'equitable'" class="parts-list">
+        <ion-item *ngFor="let id of beneficiaireIds" class="form-item" lines="none">
+          <ion-label position="stacked" class="form-label">
+            {{ beneficiaireLabel(id) }}
+            <span *ngIf="mode === 'pourcentage'"> (%)</span>
+            <span *ngIf="mode === 'personnalisee'"> (€)</span>
+          </ion-label>
+          <ion-input
+            type="number"
+            inputmode="decimal"
+            [value]="partInputs[id]"
+            (ionInput)="onPartChange(id, $any($event).detail.value)"
+            placeholder="0,00"
+            class="form-input"
+          ></ion-input>
+        </ion-item>
+        <ion-note *ngIf="partsError" color="danger" class="error-note" role="alert">{{ partsError }}</ion-note>
+      </div>
+    </div>
+
     <div class="todo-note">
       <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
-      <span>Les bénéficiaires sont fixés à votre compte pour l'instant. GET /api/groups/:id/members sera exposé en F3b.</span>
+      <span>Les bénéficiaires sont limités à votre compte tant que l'endpoint GET /api/groups/:id/members n'est pas exposé.</span>
     </div>
 
     <ion-button
