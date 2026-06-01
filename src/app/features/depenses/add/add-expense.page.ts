@@ -7,6 +7,7 @@ import { firstValueFrom } from 'rxjs';
 import { ExpenseService } from '../../../core/services/expense.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { DEFAULT_CATEGORIES, Categorie } from '../../../core/models/categorie.model';
+import { CreateExpensePayload, SplitMode } from '../../../core/models/expense.model';
 
 @Component({
   selector: 'app-add-expense',
@@ -26,6 +27,12 @@ export class AddExpensePage implements OnInit {
 
   groupId = 0;
   submitting = false;
+  mode: SplitMode = 'equitable';
+  // Map user id -> input value as string (montant or percentage).
+  partInputs: Record<number, string> = {};
+  // Order matters for UI rendering.
+  beneficiaireIds: number[] = [];
+  partsError: string | null = null;
 
   form: FormGroup = this.fb.group({
     description: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
@@ -41,6 +48,15 @@ export class AddExpensePage implements OnInit {
       return;
     }
     this.groupId = id;
+
+    // Pour l'instant les bénéficiaires se limitent au current user
+    // (GET /api/groups/:id/members non exposé). À étendre quand F7 livre les membres.
+    firstValueFrom(this.authService.user$).then((u) => {
+      if (u) {
+        this.beneficiaireIds = [u.id];
+        this.resetPartsForMode();
+      }
+    });
   }
 
   private todayIso(): string {
@@ -49,6 +65,76 @@ export class AddExpensePage implements OnInit {
     const m = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${day}`;
+  }
+
+  setMode(mode: SplitMode): void {
+    this.mode = mode;
+    this.partsError = null;
+    this.resetPartsForMode();
+  }
+
+  private resetPartsForMode(): void {
+    this.partInputs = {};
+    if (this.mode === 'equitable') {
+      return;
+    }
+    const n = this.beneficiaireIds.length || 1;
+    const montant = Number(this.form.get('montant')?.value) || 0;
+    const target = this.mode === 'pourcentage' ? 100 : montant;
+
+    // Distribue le reliquat d'arrondi sur le dernier bénéficiaire pour garantir
+    // somme exacte (ex: 100/3 = 33.33+33.33+33.34) et passer validateParts().
+    const base = Math.floor((target / n) * 100) / 100;
+    let assigned = 0;
+    this.beneficiaireIds.forEach((id, idx) => {
+      if (idx < this.beneficiaireIds.length - 1) {
+        this.partInputs[id] = base.toFixed(2);
+        assigned += base;
+      } else {
+        const last = Math.round((target - assigned) * 100) / 100;
+        this.partInputs[id] = last.toFixed(2);
+      }
+    });
+  }
+
+  onPartChange(userId: number, value: string): void {
+    this.partInputs[userId] = value;
+    this.partsError = null;
+  }
+
+  beneficiaireLabel(userId: number): string {
+    // En attendant l'endpoint /members on n'affiche que "Vous" pour le current user.
+    return 'Vous';
+  }
+
+  private validateParts(montant: number): { ok: boolean; parts?: Record<string, string> } {
+    if (this.mode === 'equitable') {
+      return { ok: true };
+    }
+
+    const parts: Record<string, string> = {};
+    let sum = 0;
+    for (const id of this.beneficiaireIds) {
+      const raw = this.partInputs[id];
+      const num = Number(raw);
+      if (!raw || !Number.isFinite(num) || num <= 0) {
+        this.partsError = 'Toutes les parts doivent être strictement positives.';
+        return { ok: false };
+      }
+      parts[String(id)] = num.toFixed(2);
+      sum += num;
+    }
+
+    const target = this.mode === 'pourcentage' ? 100 : montant;
+    if (Math.abs(sum - target) > 0.001) {
+      this.partsError =
+        this.mode === 'pourcentage'
+          ? `La somme des pourcentages doit être 100 (actuel : ${sum.toFixed(2)}).`
+          : `La somme des montants doit être ${target.toFixed(2)} (actuel : ${sum.toFixed(2)}).`;
+      return { ok: false };
+    }
+
+    return { ok: true, parts };
   }
 
   async submit(): Promise<void> {
@@ -68,41 +154,57 @@ export class AddExpensePage implements OnInit {
       await t.present();
       return;
     }
-    const beneficiaire_ids: number[] = [currentUser.id];
+
+    // Garantit la synchro avec le current user avant validateParts() sur un mode non-équitable.
+    if (this.beneficiaireIds.length === 0) {
+      this.beneficiaireIds = [currentUser.id];
+      this.resetPartsForMode();
+    }
+    const beneficiaire_ids: number[] = [...this.beneficiaireIds];
+
+    const raw = this.form.value;
+    const montantNum = Number(raw.montant);
+    const partsCheck = this.validateParts(montantNum);
+    if (!partsCheck.ok) {
+      return;
+    }
+
+    const payload: CreateExpensePayload = {
+      description: raw.description,
+      montant: montantNum,
+      date_depense: raw.date_depense,
+      id_categorie: Number(raw.id_categorie),
+      beneficiaire_ids,
+      mode: this.mode,
+    };
+    if (partsCheck.parts) {
+      payload.parts = partsCheck.parts;
+    }
 
     this.submitting = true;
-    const raw = this.form.value;
-    this.expenseService
-      .create(this.groupId, {
-        description: raw.description,
-        montant: Number(raw.montant),
-        date_depense: raw.date_depense,
-        id_categorie: Number(raw.id_categorie),
-        beneficiaire_ids,
-      })
-      .subscribe({
-        next: async (expense) => {
-          this.submitting = false;
-          const t = await this.toast.create({
-            message: 'Dépense ajoutée.',
-            duration: 2000,
-            color: 'success',
-            position: 'top',
-          });
-          await t.present();
-          this.router.navigate(['/tabs/groupes', this.groupId], { replaceUrl: true });
-        },
-        error: async () => {
-          this.submitting = false;
-          const t = await this.toast.create({
-            message: 'Impossible d\'enregistrer la dépense.',
-            duration: 3000,
-            color: 'danger',
-            position: 'top',
-          });
-          await t.present();
-        },
-      });
+    this.expenseService.create(this.groupId, payload).subscribe({
+      next: async () => {
+        this.submitting = false;
+        const t = await this.toast.create({
+          message: 'Dépense ajoutée.',
+          duration: 2000,
+          color: 'success',
+          position: 'top',
+        });
+        await t.present();
+        this.router.navigate(['/tabs/groupes', this.groupId], { replaceUrl: true });
+      },
+      error: async () => {
+        this.submitting = false;
+        const t = await this.toast.create({
+          message: "Impossible d'enregistrer la dépense.",
+          duration: 3000,
+          color: 'danger',
+          position: 'top',
+        });
+        await t.present();
+      },
+    });
   }
 
   goBack(): void {

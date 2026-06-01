@@ -91,5 +91,44 @@ describe('ExpenseService', () => {
       expect(req.request.body).toEqual(payload);
       req.flush(mockExpense, { status: 201, statusText: 'Created' });
     });
+
+    it('should POST custom mode payload with mode and parts', () => {
+      const payload: CreateExpensePayload = {
+        description: 'Repas',
+        montant: 30,
+        date_depense: '2026-05-20',
+        id_categorie: 2,
+        beneficiaire_ids: [1, 2],
+        mode: 'personnalisee',
+        parts: { '1': '20.00', '2': '10.00' },
+      };
+
+      service.create(7, payload).subscribe();
+
+      const req = httpMock.expectOne(`${base}/groups/7/expenses`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body.mode).toBe('personnalisee');
+      expect(req.request.body.parts).toEqual({ '1': '20.00', '2': '10.00' });
+      req.flush({ ...mockExpense, type_repartition: 'personnalisee' });
+    });
+
+    it('should POST percentage mode payload with parts summing to 100', () => {
+      const payload: CreateExpensePayload = {
+        description: 'Repas pct',
+        montant: 100,
+        date_depense: '2026-05-20',
+        id_categorie: 2,
+        beneficiaire_ids: [1, 2],
+        mode: 'pourcentage',
+        parts: { '1': '60.00', '2': '40.00' },
+      };
+
+      service.create(7, payload).subscribe();
+
+      const req = httpMock.expectOne(`${base}/groups/7/expenses`);
+      expect(req.request.body.mode).toBe('pourcentage');
+      expect(req.request.body.parts).toEqual({ '1': '60.00', '2': '40.00' });
+      req.flush({ ...mockExpense, type_repartition: 'pourcentage' });
+    });
   });
 });

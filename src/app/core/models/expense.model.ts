@@ -1,8 +1,11 @@
+export type SplitMode = 'equitable' | 'personnalisee' | 'pourcentage';
+
 export interface BeneficiairePart {
   id: number;
   prenom: string;
   nom: string;
   montant_part: number;
+  pourcentage?: string | null;
 }
 
 export interface Expense {
@@ -24,4 +27,7 @@ export interface CreateExpensePayload {
   date_depense: string;
   id_categorie: number;
   beneficiaire_ids: number[];
+  mode?: SplitMode;
+  // Map { user_id_string: amount_or_percentage_string }
+  parts?: Record<string, string>;
 }

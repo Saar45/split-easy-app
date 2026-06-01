@@ -87,3 +87,17 @@
   --border-radius: var(--radius-button);
   margin-top: var(--space-200);
 }
+
+.mode-section {
+  margin-bottom: var(--space-200);
+
+  ion-segment {
+    margin-top: var(--space-100);
+    margin-bottom: var(--space-150);
+  }
+}
+
+.parts-list {
+  display: flex;
+  flex-direction: column;
+}
