@@ -77,6 +77,11 @@ export class DetailGroupPage implements OnInit {
     this.router.navigate(['/tabs/depenses/add', this.group.id]);
   }
 
+  navigateToBalances(): void {
+    if (!this.group) return;
+    this.router.navigate(['/tabs/groupes', this.group.id, 'balances']);
+  }
+
   private async navigateBackWithToast(message: string): Promise<void> {
     const t = await this.toast.create({
       message,

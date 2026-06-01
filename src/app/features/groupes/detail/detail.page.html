@@ -37,6 +37,17 @@
       </ion-card-content>
     </ion-card>
 
+    <ion-button
+      expand="block"
+      fill="solid"
+      (click)="navigateToBalances()"
+      class="balances-btn"
+      aria-label="Voir les soldes du groupe"
+    >
+      <ion-icon slot="start" name="stats-chart-outline" aria-hidden="true"></ion-icon>
+      Voir les soldes
+    </ion-button>
+
     <!-- Expenses section -->
     <div class="expenses-header">
       <h2 class="expenses-title">Dépenses</h2>
