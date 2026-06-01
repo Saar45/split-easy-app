@@ -6,8 +6,10 @@ import { firstValueFrom } from 'rxjs';
 
 import { ExpenseService } from '../../../core/services/expense.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { InvitationService } from '../../../core/services/invitation.service';
 import { DEFAULT_CATEGORIES, Categorie } from '../../../core/models/categorie.model';
 import { CreateExpensePayload, SplitMode } from '../../../core/models/expense.model';
+import { GroupMember } from '../../../core/models/invitation.model';
 
 @Component({
   selector: 'app-add-expense',
@@ -21,6 +23,7 @@ export class AddExpensePage implements OnInit {
   private readonly router = inject(Router);
   private readonly expenseService = inject(ExpenseService);
   private readonly authService = inject(AuthService);
+  private readonly invitationService = inject(InvitationService);
   private readonly toast = inject(ToastController);
 
   readonly categories: Categorie[] = DEFAULT_CATEGORIES;
@@ -33,6 +36,7 @@ export class AddExpensePage implements OnInit {
   // Order matters for UI rendering.
   beneficiaireIds: number[] = [];
   partsError: string | null = null;
+  availableMembers: GroupMember[] = [];
 
   form: FormGroup = this.fb.group({
     description: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
@@ -49,14 +53,41 @@ export class AddExpensePage implements OnInit {
     }
     this.groupId = id;
 
-    // Pour l'instant les bénéficiaires se limitent au current user
-    // (GET /api/groups/:id/members non exposé). À étendre quand F7 livre les membres.
-    firstValueFrom(this.authService.user$).then((u) => {
-      if (u) {
-        this.beneficiaireIds = [u.id];
+    // Charge la liste des membres acceptés (F7) pour permettre la sélection multi-bénéficiaires.
+    // Fallback au current user uniquement si l'endpoint members échoue (sécurité défensive).
+    this.invitationService.listMembers(id).subscribe({
+      next: (members) => {
+        this.availableMembers = members.filter((m) => m.statut_invitation === 'acceptee');
+        this.beneficiaireIds = this.availableMembers.map((m) => m.id);
         this.resetPartsForMode();
-      }
+      },
+      error: () => {
+        firstValueFrom(this.authService.user$).then((u) => {
+          if (u) {
+            this.beneficiaireIds = [u.id];
+            this.resetPartsForMode();
+          }
+        });
+      },
     });
+  }
+
+  toggleBeneficiaire(userId: number): void {
+    const idx = this.beneficiaireIds.indexOf(userId);
+    if (idx >= 0) {
+      this.beneficiaireIds.splice(idx, 1);
+    } else {
+      // Préserve l'ordre des membres pour un rendu stable.
+      const ordered = this.availableMembers.map((m) => m.id);
+      this.beneficiaireIds = ordered.filter(
+        (id) => this.beneficiaireIds.includes(id) || id === userId,
+      );
+    }
+    this.resetPartsForMode();
+  }
+
+  isBeneficiaire(userId: number): boolean {
+    return this.beneficiaireIds.includes(userId);
   }
 
   private todayIso(): string {
@@ -103,8 +134,8 @@ export class AddExpensePage implements OnInit {
   }
 
   beneficiaireLabel(userId: number): string {
-    // En attendant l'endpoint /members on n'affiche que "Vous" pour le current user.
-    return 'Vous';
+    const member = this.availableMembers.find((m) => m.id === userId);
+    return member ? `${member.prenom} ${member.nom}`.trim() : 'Membre';
   }
 
   private validateParts(montant: number): { ok: boolean; parts?: Record<string, string> } {
@@ -155,7 +186,8 @@ export class AddExpensePage implements OnInit {
       return;
     }
 
-    // Garantit la synchro avec le current user avant validateParts() sur un mode non-équitable.
+    // Fallback ultime : si aucun bénéficiaire (échec endpoint members), retombe sur le current user
+    // pour ne pas bloquer l'enregistrement d'une dépense personnelle.
     if (this.beneficiaireIds.length === 0) {
       this.beneficiaireIds = [currentUser.id];
       this.resetPartsForMode();

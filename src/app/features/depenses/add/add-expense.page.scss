@@ -101,3 +101,25 @@
   display: flex;
   flex-direction: column;
 }
+
+.beneficiaires-section {
+  margin: var(--space-200) 0;
+}
+
+.beneficiaires-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-100);
+}
+
+.beneficiaire-chip {
+  --background: var(--surface-white);
+  --color: var(--text-primary);
+  border: 1px solid var(--surface-border);
+
+  &.chip--selected {
+    --background: var(--brand-navy-800);
+    --color: var(--surface-white);
+    border-color: var(--brand-navy-800);
+  }
+}
