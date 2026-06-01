@@ -48,6 +48,90 @@
       Voir les soldes
     </ion-button>
 
+    <!-- Members section -->
+    <div class="members-header">
+      <h2 class="members-title">Membres</h2>
+    </div>
+
+    <ion-spinner *ngIf="loadingMembers" name="crescent" class="members-spinner" aria-label="Chargement des membres"></ion-spinner>
+
+    <ng-container *ngIf="!loadingMembers && !membersError">
+      <ion-list class="members-list" aria-label="Membres acceptés">
+        <ion-item *ngFor="let m of acceptedMembers()" class="member-item">
+          <ion-label>
+            <h3 class="member-item__name">{{ m.prenom }} {{ m.nom }}</h3>
+            <p class="member-item__email">{{ m.email }}</p>
+          </ion-label>
+          <ion-badge *ngIf="m.role === 'createur'" slot="end" color="primary" class="member-item__badge">
+            Créateur
+          </ion-badge>
+        </ion-item>
+      </ion-list>
+
+      <div *ngIf="pendingMembers().length > 0" class="pending-section">
+        <h3 class="pending-title">Invitations en attente</h3>
+        <ion-list>
+          <ion-item *ngFor="let m of pendingMembers()" class="member-item member-item--pending">
+            <ion-label>
+              <h3 class="member-item__name">{{ m.prenom }} {{ m.nom }}</h3>
+              <p class="member-item__email">{{ m.email }}</p>
+            </ion-label>
+            <ion-badge slot="end" color="warning" class="member-item__badge">
+              En attente
+            </ion-badge>
+          </ion-item>
+        </ion-list>
+      </div>
+    </ng-container>
+
+    <div *ngIf="!loadingMembers && membersError" class="members-error" role="alert">
+      <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+      Impossible de charger les membres.
+    </div>
+
+    <!-- Invite section : créateur uniquement -->
+    <div *ngIf="isCreator()" class="invite-section">
+      <h3 class="invite-title">Inviter par email</h3>
+      <form (ngSubmit)="submitInvite()" class="invite-form">
+        <ion-input
+          type="email"
+          [(ngModel)]="inviteEmail"
+          name="inviteEmail"
+          placeholder="email@example.com"
+          aria-label="Email de l'utilisateur à inviter"
+          fill="outline"
+          class="invite-input"
+          required
+        ></ion-input>
+        <ion-button
+          type="submit"
+          [disabled]="inviting || !inviteEmail.trim()"
+          aria-label="Envoyer l'invitation"
+          class="invite-submit"
+        >
+          {{ inviting ? 'Envoi…' : 'Inviter' }}
+        </ion-button>
+      </form>
+
+      <div *ngIf="lastInviteToken" class="invite-token-card" role="status">
+        <p class="invite-token-card__hint">
+          Partagez ce lien avec la personne invitée. Le token expire dans 7 jours.
+        </p>
+        <div class="invite-token-card__row">
+          <code class="invite-token-card__token">{{ lastInviteToken }}</code>
+          <ion-button fill="clear" size="small" (click)="copyToken()" aria-label="Copier le token">
+            <ion-icon slot="icon-only" name="copy-outline" aria-hidden="true"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="invite-token-card__row">
+          <span class="invite-token-card__url">{{ invitationUrl() }}</span>
+          <ion-button fill="clear" size="small" (click)="copyUrl()" aria-label="Copier le lien">
+            <ion-icon slot="icon-only" name="link-outline" aria-hidden="true"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
     <!-- Expenses section -->
     <div class="expenses-header">
       <h2 class="expenses-title">Dépenses</h2>
