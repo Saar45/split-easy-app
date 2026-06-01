@@ -13,6 +13,11 @@ const routes: Routes = [
       import('./create/create.module').then((m) => m.CreateGroupPageModule),
   },
   {
+    path: ':id/balances',
+    loadChildren: () =>
+      import('./balances/balances.module').then((m) => m.BalancesPageModule),
+  },
+  {
     path: ':id',
     loadChildren: () =>
       import('./detail/detail.module').then((m) => m.DetailGroupPageModule),
