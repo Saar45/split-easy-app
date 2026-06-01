@@ -80,13 +80,21 @@ export class AddExpensePage implements OnInit {
     }
     const n = this.beneficiaireIds.length || 1;
     const montant = Number(this.form.get('montant')?.value) || 0;
-    if (this.mode === 'pourcentage') {
-      const equal = (100 / n).toFixed(2);
-      this.beneficiaireIds.forEach((id) => (this.partInputs[id] = equal));
-    } else {
-      const equal = (montant / n).toFixed(2);
-      this.beneficiaireIds.forEach((id) => (this.partInputs[id] = equal));
-    }
+    const target = this.mode === 'pourcentage' ? 100 : montant;
+
+    // Distribue le reliquat d'arrondi sur le dernier bénéficiaire pour garantir
+    // somme exacte (ex: 100/3 = 33.33+33.33+33.34) et passer validateParts().
+    const base = Math.floor((target / n) * 100) / 100;
+    let assigned = 0;
+    this.beneficiaireIds.forEach((id, idx) => {
+      if (idx < this.beneficiaireIds.length - 1) {
+        this.partInputs[id] = base.toFixed(2);
+        assigned += base;
+      } else {
+        const last = Math.round((target - assigned) * 100) / 100;
+        this.partInputs[id] = last.toFixed(2);
+      }
+    });
   }
 
   onPartChange(userId: number, value: string): void {
@@ -146,7 +154,13 @@ export class AddExpensePage implements OnInit {
       await t.present();
       return;
     }
-    const beneficiaire_ids: number[] = this.beneficiaireIds.length > 0 ? [...this.beneficiaireIds] : [currentUser.id];
+
+    // Garantit la synchro avec le current user avant validateParts() sur un mode non-équitable.
+    if (this.beneficiaireIds.length === 0) {
+      this.beneficiaireIds = [currentUser.id];
+      this.resetPartsForMode();
+    }
+    const beneficiaire_ids: number[] = [...this.beneficiaireIds];
 
     const raw = this.form.value;
     const montantNum = Number(raw.montant);
