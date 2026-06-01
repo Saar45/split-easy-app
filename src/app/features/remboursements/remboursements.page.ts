@@ -31,7 +31,14 @@ export class RemboursementsPage implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
-    const u = await firstValueFrom(this.authService.user$);
+    let u = await firstValueFrom(this.authService.user$);
+    if (!u) {
+      try {
+        u = await firstValueFrom(this.authService.fetchCurrentUser());
+      } catch {
+        u = null;
+      }
+    }
     this.currentUserId = u?.id ?? 0;
     this.load();
   }
@@ -62,10 +69,11 @@ export class RemboursementsPage implements OnInit {
   }
 
   filtered(): Remboursement[] {
+    const ongoing: ReadonlyArray<string> = ['propose', 'en_attente'];
     if (this.tab === 'en_cours') {
-      return this.list.filter((r) => r.statut === 'propose');
+      return this.list.filter((r) => ongoing.includes(r.statut));
     }
-    return this.list.filter((r) => r.statut !== 'propose');
+    return this.list.filter((r) => !ongoing.includes(r.statut));
   }
 
   isDebtor(rb: Remboursement): boolean {

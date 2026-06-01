@@ -46,7 +46,16 @@ export class BalancesPage implements OnInit {
     }
     this.groupId = id;
 
-    const u = await firstValueFrom(this.authService.user$);
+    let u = await firstValueFrom(this.authService.user$);
+    if (!u) {
+      // Fallback : si le BehaviorSubject n'a pas encore reçu le user (premier
+      // chargement post-login), on déclenche un fetch explicite.
+      try {
+        u = await firstValueFrom(this.authService.fetchCurrentUser());
+      } catch {
+        u = null;
+      }
+    }
     this.currentUserId = u?.id ?? 0;
     this.load();
   }

@@ -62,12 +62,14 @@ describe('RemboursementService', () => {
   it('should POST reject', () => {
     service.reject(1).subscribe();
     const req = httpMock.expectOne(`${base}/remboursements/1/reject`);
+    expect(req.request.method).toBe('POST');
     req.flush({ ...mockRb, statut: 'conteste' });
   });
 
   it('should POST cancel', () => {
     service.cancel(1).subscribe();
     const req = httpMock.expectOne(`${base}/remboursements/1/cancel`);
+    expect(req.request.method).toBe('POST');
     req.flush({ ...mockRb, statut: 'annule' });
   });
 });
