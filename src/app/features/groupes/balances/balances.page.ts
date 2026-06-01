@@ -21,6 +21,8 @@ export class BalancesPage implements OnInit {
   loading = true;
   hasError = false;
   data: GroupBalances | null = null;
+  private cachedSortedSoldes: Solde[] = [];
+  private cachedSortedSource: Solde[] | null = null;
 
   private readonly amountFormatter = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -29,7 +31,7 @@ export class BalancesPage implements OnInit {
   });
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('groupId'));
+    const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isFinite(id) || !Number.isInteger(id) || id <= 0) {
       this.router.navigate(['/tabs/groupes']);
       return;
@@ -41,6 +43,8 @@ export class BalancesPage implements OnInit {
   private load(): void {
     this.loading = true;
     this.hasError = false;
+    this.data = null;
+    this.cachedSortedSource = null;
     this.balanceService.getForGroup(this.groupId).subscribe({
       next: (b) => {
         this.data = b;
@@ -73,10 +77,15 @@ export class BalancesPage implements OnInit {
     return this.amountFormatter.format(Number.isFinite(n) ? n : 0);
   }
 
-  // Trie créanciers en tête, puis débiteurs, puis équilibrés.
+  // Mémoïsation : ne re-trie que lorsque la référence du tableau soldes change.
   sortedSoldes(): Solde[] {
     if (!this.data) return [];
-    return [...this.data.soldes].sort((a, b) => Number(b.balance) - Number(a.balance));
+    if (this.cachedSortedSource === this.data.soldes) {
+      return this.cachedSortedSoldes;
+    }
+    this.cachedSortedSource = this.data.soldes;
+    this.cachedSortedSoldes = [...this.data.soldes].sort((a, b) => Number(b.balance) - Number(a.balance));
+    return this.cachedSortedSoldes;
   }
 
   remboursements(): RemboursementSuggestion[] {
@@ -96,6 +105,10 @@ export class BalancesPage implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/tabs/groupes', this.groupId]);
+    if (this.groupId > 0) {
+      this.router.navigate(['/tabs/groupes', this.groupId]);
+      return;
+    }
+    this.router.navigate(['/tabs/groupes']);
   }
 }
