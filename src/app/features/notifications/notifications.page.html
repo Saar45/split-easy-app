@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Notifications</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        *ngIf="list.length > 0"
+        fill="clear"
+        (click)="markAll()"
+        aria-label="Tout marquer comme lu"
+      >
+        <ion-icon name="checkmark-done-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="loading" class="loading-wrapper" aria-live="polite" aria-label="Chargement en cours">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </div>
+
+  <div *ngIf="!loading && hasError" class="error-wrapper" aria-live="assertive">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+    <p>Impossible de charger les notifications.</p>
+  </div>
+
+  <ng-container *ngIf="!loading && !hasError">
+    <div *ngIf="list.length === 0" class="empty-state" aria-live="polite">
+      <ion-icon name="notifications-off-outline" aria-hidden="true"></ion-icon>
+      <p>Aucune notification pour le moment.</p>
+    </div>
+
+    <ion-list *ngIf="list.length > 0" lines="full">
+      <ion-item
+        *ngFor="let notif of list"
+        button
+        detail="false"
+        (click)="onTap(notif)"
+        [class.unread]="!notif.lue"
+        [attr.aria-label]="notif.titre + ', ' + notif.message"
+      >
+        <ion-icon
+          slot="start"
+          [name]="iconFor(notif.type)"
+          aria-hidden="true"
+          class="notif-icon"
+        ></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <h3 class="notif-title">{{ notif.titre }}</h3>
+          <p class="notif-message">{{ notif.message }}</p>
+          <p class="notif-date">{{ relativeDate(notif.date_creation) }}</p>
+        </ion-label>
+        <ion-badge *ngIf="!notif.lue" slot="end" color="primary" aria-label="Non lue">Nouveau</ion-badge>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+</ion-content>
