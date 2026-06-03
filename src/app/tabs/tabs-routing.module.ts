@@ -21,8 +21,8 @@ const routes: Routes = [
       },
       {
         path: 'ajouter',
-        loadChildren: () =>
-          import('../features/ajouter/ajouter.module').then((m) => m.AjouterPageModule),
+        redirectTo: '/tabs/accueil',
+        pathMatch: 'full',
       },
       {
         path: 'statistiques',

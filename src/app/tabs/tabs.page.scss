@@ -10,12 +10,13 @@ ion-tab-bar {
   ion-icon {
     width: 32px;
     height: 32px;
-    padding: 8px;
+    padding: var(--space-100);
     background: var(--brand-navy-800);
     color: var(--surface-white);
     border-radius: var(--radius-pill);
     box-shadow: var(--shadow-hover);
     transform: translateY(-8px);
+    font-size: 28px;
   }
 
   ion-label {
