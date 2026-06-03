@@ -1,12 +1,14 @@
 export interface Categorie {
   id: number;
   libelle: string;
-  icone?: string;
-  couleur?: string;
+  icone?: string | null;
+  couleur?: string | null;
+  ordre_affichage?: number | null;
 }
 
-// Hardcoded until GET /api/categories is exposed (follow-up ticket).
-export const DEFAULT_CATEGORIES: Categorie[] = [
+// Fallback used only if GET /api/categories fails. Kept in sync with the backend
+// CategorieFixtures default set.
+export const FALLBACK_CATEGORIES: Categorie[] = [
   { id: 1, libelle: 'Courses',    icone: 'cart',          couleur: '#4CAF50' },
   { id: 2, libelle: 'Restaurant', icone: 'restaurant',    couleur: '#FF9800' },
   { id: 3, libelle: 'Transport',  icone: 'car',           couleur: '#2196F3' },

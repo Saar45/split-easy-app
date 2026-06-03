@@ -7,7 +7,8 @@ import { firstValueFrom } from 'rxjs';
 import { ExpenseService } from '../../../core/services/expense.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { InvitationService } from '../../../core/services/invitation.service';
-import { DEFAULT_CATEGORIES, Categorie } from '../../../core/models/categorie.model';
+import { CategoryService } from '../../../core/services/category.service';
+import { Categorie } from '../../../core/models/categorie.model';
 import { CreateExpensePayload, SplitMode } from '../../../core/models/expense.model';
 import { GroupMember } from '../../../core/models/invitation.model';
 
@@ -24,9 +25,10 @@ export class AddExpensePage implements OnInit {
   private readonly expenseService = inject(ExpenseService);
   private readonly authService = inject(AuthService);
   private readonly invitationService = inject(InvitationService);
+  private readonly categoryService = inject(CategoryService);
   private readonly toast = inject(ToastController);
 
-  readonly categories: Categorie[] = DEFAULT_CATEGORIES;
+  categories: Categorie[] = [];
 
   groupId = 0;
   submitting = false;
@@ -52,6 +54,10 @@ export class AddExpensePage implements OnInit {
       return;
     }
     this.groupId = id;
+
+    this.categoryService.list().subscribe({
+      next: (cats) => (this.categories = cats),
+    });
 
     // Charge la liste des membres acceptés (F7) pour permettre la sélection multi-bénéficiaires.
     // Fallback au current user uniquement si l'endpoint members échoue (sécurité défensive).

@@ -6,13 +6,11 @@
 
 <ion-content class="ion-padding">
 
-  <!-- Header section -->
   <section class="stats-header">
     <h1 class="stats-title">Tes dépenses</h1>
     <p class="stats-subtitle">Visualise tes dépenses sur la période sélectionnée.</p>
   </section>
 
-  <!-- Period selector -->
   <ion-segment
     class="period-segment"
     [value]="selectedPeriod"
@@ -30,59 +28,109 @@
     </ion-segment-button>
   </ion-segment>
 
-  <!-- Chart placeholder card -->
-  <ion-card class="chart-card">
-    <ion-card-content class="chart-placeholder">
-      <ion-icon
-        name="stats-chart-outline"
-        class="chart-icon"
-        aria-hidden="true"
-      ></ion-icon>
-      <h3 class="chart-placeholder-title">Graphique bientôt disponible</h3>
-      <p class="chart-placeholder-desc">Cette fonctionnalité arrive prochainement avec F8.</p>
+  <div *ngIf="loading" class="state-banner state-banner--loading" role="status" aria-live="polite">
+    <ion-spinner name="dots" aria-hidden="true"></ion-spinner>
+    <span>Chargement...</span>
+  </div>
+
+  <div *ngIf="error && !loading" class="state-banner state-banner--error" role="alert">
+    {{ error }}
+  </div>
+
+  <!-- Doughnut chart : répartition par catégorie -->
+  <ion-card class="chart-card" *ngIf="!loading && stats">
+    <ion-card-header>
+      <ion-card-title class="chart-card-title">Répartition par catégorie</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="chart-wrapper" *ngIf="(doughnutData.datasets[0]?.data?.length ?? 0) > 0; else emptyChart">
+        <canvas
+          baseChart
+          [type]="'doughnut'"
+          [data]="doughnutData"
+          [options]="doughnutOptions"
+          aria-label="Graphique en anneau de la répartition par catégorie"
+        ></canvas>
+      </div>
+      <ng-template #emptyChart>
+        <div class="chart-empty">
+          <ion-icon name="pie-chart-outline" class="chart-icon" aria-hidden="true"></ion-icon>
+          <p class="chart-empty-text">Aucune dépense sur cette période.</p>
+        </div>
+      </ng-template>
     </ion-card-content>
   </ion-card>
 
-  <!-- Categories summary placeholder card -->
-  <ion-card class="categories-card">
+  <!-- Line chart : évolution -->
+  <ion-card class="chart-card" *ngIf="!loading && stats">
+    <ion-card-header>
+      <ion-card-title class="chart-card-title">Évolution</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="chart-wrapper">
+        <canvas
+          baseChart
+          [type]="'line'"
+          [data]="lineData"
+          [options]="lineOptions"
+          aria-label="Graphique d'évolution des dépenses"
+        ></canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Par catégorie : détail avec barres -->
+  <ion-card class="categories-card" *ngIf="!loading && stats">
     <ion-card-header>
       <ion-card-title class="categories-card-title">Par catégorie</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ul class="category-list" aria-label="Répartition par catégorie">
-        <li *ngFor="let cat of categories" class="category-row">
-          <ion-icon [name]="cat.icon" class="category-icon" aria-hidden="true"></ion-icon>
-          <span class="category-label">{{ cat.label }}</span>
-          <div class="category-bar-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-            <div class="category-bar-fill"></div>
+      <ul class="category-list" aria-label="Répartition par catégorie" *ngIf="stats.par_categorie.length > 0; else emptyCats">
+        <li *ngFor="let cat of stats.par_categorie" class="category-row">
+          <span class="category-label">{{ cat.nom }}</span>
+          <div
+            class="category-bar-track"
+            role="progressbar"
+            [attr.aria-valuenow]="cat.pourcentage"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-label]="cat.nom + ' ' + cat.pourcentage + ' %'"
+          >
+            <div
+              class="category-bar-fill"
+              [style.width.%]="cat.pourcentage"
+              [style.background]="cat.couleur || 'var(--brand-navy-500)'"
+            ></div>
           </div>
-          <span class="category-amount amount">—</span>
+          <span class="category-amount amount">{{ formatMontant(cat.montant) }}</span>
         </li>
       </ul>
-      <small class="placeholder-note">Les vraies données arrivent avec F8.</small>
+      <ng-template #emptyCats>
+        <p class="empty-cats-text">Aucune catégorie sur cette période.</p>
+      </ng-template>
     </ion-card-content>
   </ion-card>
 
-  <!-- Summary cards row -->
-  <div class="summary-row" role="list" aria-label="Résumé de la période">
+  <!-- Cartes résumé -->
+  <div class="summary-row" role="list" aria-label="Résumé de la période" *ngIf="!loading && stats">
 
     <ion-card class="summary-card" role="listitem">
       <ion-card-content>
-        <span class="summary-value amount">—</span>
+        <span class="summary-value amount">{{ formatMontant(stats.total_depense) }}</span>
         <span class="summary-label">Total dépensé</span>
       </ion-card-content>
     </ion-card>
 
     <ion-card class="summary-card" role="listitem">
       <ion-card-content>
-        <span class="summary-value amount">—</span>
-        <span class="summary-label">Moyenne / mois</span>
+        <span class="summary-value amount">{{ formatMontant(stats.moyenne_par_jour) }}</span>
+        <span class="summary-label">Moyenne / jour</span>
       </ion-card-content>
     </ion-card>
 
     <ion-card class="summary-card" role="listitem">
       <ion-card-content>
-        <span class="summary-value amount">—</span>
+        <span class="summary-value amount">{{ stats.categorie_principale ? stats.categorie_principale.nom : '—' }}</span>
         <span class="summary-label">Catégorie principale</span>
       </ion-card-content>
     </ion-card>
