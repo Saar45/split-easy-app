@@ -71,6 +71,25 @@ npm test                            # Karma watch
 npx ng test --watch=false --browsers=ChromeHeadless --code-coverage
 ```
 
-## Statut Jalon 5
+## Fonctionnalités livrées (v1.0.0)
 
-Squelette initialisé : bottom tab bar 5 entrées, theme tokens charte graphique, Dockerfile multi-stage, environments. Prochaines étapes : F1 authentification, F2 gestion groupes.
+| Code | Périmètre |
+|------|-----------|
+| F1   | Auth : login, register, refresh, JWT en RAM |
+| F2   | Liste / création / détail groupes + invitations |
+| F3   | Ajout dépense avec catégories |
+| F4   | Répartition 3 modes (chips équitable / personnalisée / pourcentage) |
+| F5   | Soldes optimisés greedy affichés dans Détail groupe |
+| F6   | Workflow remboursement bipartite (proposer / accepter / contester / annuler) |
+| F7   | Page Invitations en attente |
+| F8   | Statistiques avec doughnut et line charts (Chart.js) |
+| F9   | Cloche notifications dans l'Accueil + page Notifications avec polling 30s |
+| RGPD | Export données + suppression compte depuis Profil |
+
+## Comptes de test
+
+Mêmes comptes que le backend (voir README du repo `split-easy-api`).
+
+## Statut
+
+v1.0.0 feature-complete et conforme au dossier v3.0.
