@@ -1,6 +1,20 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Accueil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToNotifications()" aria-label="Voir les notifications" class="notif-bell">
+        <ion-icon name="notifications-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+        <ion-badge
+          *ngIf="(unreadCount$ | async) as count"
+          [hidden]="count === 0"
+          color="danger"
+          class="notif-badge"
+          [attr.aria-label]="count + ' notification(s) non lue(s)'"
+        >
+          {{ count > 9 ? '9+' : count }}
+        </ion-badge>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
