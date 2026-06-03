@@ -55,6 +55,13 @@ const routes: Routes = [
             (m) => m.InvitationsPageModule,
           ),
       },
+      {
+        path: 'notifications',
+        loadChildren: () =>
+          import('../features/notifications/notifications.module').then(
+            (m) => m.NotificationsPageModule,
+          ),
+      },
       { path: '', redirectTo: '/tabs/accueil', pathMatch: 'full' },
     ],
   },

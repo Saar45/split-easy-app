@@ -1,9 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardService } from '../../core/services/dashboard.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { DashboardSummary } from '../../core/models/dashboard.model';
 
 @Component({
@@ -12,15 +13,17 @@ import { DashboardSummary } from '../../core/models/dashboard.model';
   styleUrls: ['./dashboard.page.scss'],
   standalone: false,
 })
-export class DashboardPage implements OnInit {
+export class DashboardPage implements OnInit, OnDestroy {
   private readonly dashboardService = inject(DashboardService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly notifications = inject(NotificationService);
 
   prenom = '';
   summary: DashboardSummary | null = null;
   loading = true;
   error = false;
+  unreadCount$: Observable<number> = this.notifications.unreadCount$;
 
   private readonly formatter = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -33,10 +36,20 @@ export class DashboardPage implements OnInit {
     const user = await firstValueFrom(this.authService.user$);
     this.prenom = user?.prenom ?? '';
     this.loadDashboard();
+    this.notifications.startPolling();
+  }
+
+  ngOnDestroy(): void {
+    this.notifications.stopPolling();
   }
 
   ionViewWillEnter(): void {
     this.loadDashboard();
+    this.notifications.refreshUnreadCount();
+  }
+
+  goToNotifications(): void {
+    void this.router.navigate(['/tabs/notifications']);
   }
 
   formatAmount(s: string): string {
