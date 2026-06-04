@@ -1,5 +1,7 @@
 # split-easy-app
 
+[![CI](https://github.com/Saar45/split-easy-app/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Saar45/split-easy-app/actions/workflows/ci.yml)
+
 SPA Angular 20 + Ionic 8 de l'application **Split-Easy** — gestion de dépenses partagées entre groupes.
 Projet fil rouge CDA niveau 6 (RNCP 37873), IPSSI promotion 2025-2026.
 
