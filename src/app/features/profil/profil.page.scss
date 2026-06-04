@@ -1,4 +1,101 @@
-.placeholder {
+// Profile card
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-300) var(--space-200);
+  margin-bottom: var(--space-300);
+  background: var(--surface-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-navy-800);
+  color: var(--surface-white);
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-150);
+  flex-shrink: 0;
+}
+
+.profile-name {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-050);
+  text-align: center;
+}
+
+.profile-email {
+  font-size: 0.875rem;
   color: var(--text-secondary);
-  font-family: var(--font-body);
+  margin: 0;
+  text-align: center;
+}
+
+// Section cards
+.section-card {
+  background: var(--surface-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  margin-bottom: var(--space-200);
+  overflow: hidden;
+
+  &--rgpd {
+    background: var(--surface-cream);
+  }
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+  padding: var(--space-150) var(--space-200) var(--space-050);
+}
+
+.section-list {
+  background: transparent;
+
+  ion-item {
+    --background: transparent;
+    --border-color: var(--surface-border);
+    --padding-start: var(--space-200);
+    --padding-end: var(--space-200);
+
+    ion-icon[slot='start'] {
+      color: var(--brand-navy-500);
+      margin-inline-end: var(--space-150);
+    }
+  }
+}
+
+// Danger item styles
+.item-danger {
+  --background: transparent;
+}
+
+.icon-danger {
+  color: var(--color-error) !important;
+}
+
+.label-danger {
+  color: var(--color-error);
+}
+
+// Logout button
+.logout-btn {
+  margin-top: var(--space-300);
+  margin-bottom: var(--space-400);
+  --border-radius: var(--radius-button);
 }

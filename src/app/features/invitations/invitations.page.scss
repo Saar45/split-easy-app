@@ -1,0 +1,58 @@
+.page-spinner {
+  display: block;
+  margin: var(--space-300) auto;
+}
+
+.error-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-150);
+  padding: var(--space-400) var(--space-200);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px;
+  color: var(--brand-navy-500);
+}
+
+.empty-text {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+.invitations-list {
+  background: transparent;
+}
+
+.invitation-card {
+  margin: 0 0 var(--space-200);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+}
+
+.invitation-card__title {
+  font-family: var(--font-heading);
+  color: var(--brand-navy-800);
+}
+
+.invitation-card__meta {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.invitation-card__expires {
+  margin: 0 0 var(--space-200);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.invitation-card__actions {
+  display: flex;
+  gap: var(--space-150);
+  flex-wrap: wrap;
+}

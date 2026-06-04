@@ -1,0 +1,205 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" aria-label="Retour">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ group?.nom ?? 'Groupe' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-spinner *ngIf="loading" name="crescent" class="page-spinner" aria-label="Chargement"></ion-spinner>
+
+  <ng-container *ngIf="!loading && group">
+    <ion-card class="detail-card">
+      <ion-card-header>
+        <ion-card-title class="detail-card__title">{{ group.nom }}</ion-card-title>
+        <ion-card-subtitle *ngIf="group.description" class="detail-card__desc">
+          {{ group.description }}
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="detail-row">
+          <span class="detail-row__label">Statut</span>
+          <span class="detail-row__value">{{ group.statut }}</span>
+        </div>
+        <div class="detail-row" *ngIf="group.couleur">
+          <span class="detail-row__label">Couleur</span>
+          <span class="detail-row__swatch" [style.background]="group.couleur" aria-label="Couleur du groupe {{ group.couleur }}"></span>
+          <span class="detail-row__value">{{ group.couleur }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-row__label">Créé le</span>
+          <span class="detail-row__value">{{ group.date_creation | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button
+      expand="block"
+      fill="solid"
+      (click)="navigateToBalances()"
+      class="balances-btn"
+      aria-label="Voir les soldes du groupe"
+    >
+      <ion-icon slot="start" name="stats-chart-outline" aria-hidden="true"></ion-icon>
+      Voir les soldes
+    </ion-button>
+
+    <!-- Members section -->
+    <div class="members-header">
+      <h2 class="members-title">Membres</h2>
+    </div>
+
+    <ion-spinner *ngIf="loadingMembers" name="crescent" class="members-spinner" aria-label="Chargement des membres"></ion-spinner>
+
+    <ng-container *ngIf="!loadingMembers && !membersError">
+      <ion-list class="members-list" aria-label="Membres acceptés">
+        <ion-item *ngFor="let m of acceptedMembers()" class="member-item">
+          <ion-label>
+            <h3 class="member-item__name">{{ m.prenom }} {{ m.nom }}</h3>
+            <p class="member-item__email">{{ m.email }}</p>
+          </ion-label>
+          <ion-badge *ngIf="m.role === 'createur'" slot="end" color="primary" class="member-item__badge">
+            Créateur
+          </ion-badge>
+        </ion-item>
+      </ion-list>
+
+      <div *ngIf="pendingMembers().length > 0" class="pending-section">
+        <h3 class="pending-title">Invitations en attente</h3>
+        <ion-list>
+          <ion-item *ngFor="let m of pendingMembers()" class="member-item member-item--pending">
+            <ion-label>
+              <h3 class="member-item__name">{{ m.prenom }} {{ m.nom }}</h3>
+              <p class="member-item__email">{{ m.email }}</p>
+            </ion-label>
+            <ion-badge slot="end" color="warning" class="member-item__badge">
+              En attente
+            </ion-badge>
+          </ion-item>
+        </ion-list>
+      </div>
+    </ng-container>
+
+    <div *ngIf="!loadingMembers && membersError" class="members-error" role="alert">
+      <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+      Impossible de charger les membres.
+    </div>
+
+    <!-- Invite section : créateur uniquement -->
+    <div *ngIf="isCreator()" class="invite-section">
+      <h3 class="invite-title">Inviter par email</h3>
+      <form (ngSubmit)="submitInvite()" class="invite-form">
+        <ion-input
+          type="email"
+          [(ngModel)]="inviteEmail"
+          name="inviteEmail"
+          placeholder="email@example.com"
+          aria-label="Email de l'utilisateur à inviter"
+          fill="outline"
+          class="invite-input"
+          required
+        ></ion-input>
+        <ion-button
+          type="submit"
+          [disabled]="inviting || !inviteEmail.trim()"
+          aria-label="Envoyer l'invitation"
+          class="invite-submit"
+        >
+          {{ inviting ? 'Envoi…' : 'Inviter' }}
+        </ion-button>
+      </form>
+
+      <div *ngIf="lastInviteToken" class="invite-token-card" role="status">
+        <p class="invite-token-card__hint">
+          Partagez ce lien avec la personne invitée. Le token expire dans 7 jours.
+        </p>
+        <div class="invite-token-card__row">
+          <code class="invite-token-card__token">{{ lastInviteToken }}</code>
+          <ion-button fill="clear" size="small" (click)="copyToken()" aria-label="Copier le token">
+            <ion-icon slot="icon-only" name="copy-outline" aria-hidden="true"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="invite-token-card__row">
+          <span class="invite-token-card__url">{{ invitationUrl() }}</span>
+          <ion-button fill="clear" size="small" (click)="copyUrl()" aria-label="Copier le lien">
+            <ion-icon slot="icon-only" name="link-outline" aria-hidden="true"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expenses section -->
+    <div class="expenses-header">
+      <h2 class="expenses-title">Dépenses</h2>
+      <ion-button
+        fill="clear"
+        size="small"
+        (click)="navigateToAddExpense()"
+        aria-label="Ajouter une dépense"
+        class="add-expense-btn"
+      >
+        <ion-icon slot="start" name="add-circle-outline" aria-hidden="true"></ion-icon>
+        Ajouter
+      </ion-button>
+    </div>
+
+    <ion-spinner *ngIf="loadingExpenses" name="crescent" class="expenses-spinner" aria-label="Chargement des dépenses"></ion-spinner>
+
+    <ng-container *ngIf="!loadingExpenses">
+      <div *ngIf="expensesError" class="expenses-error" role="alert">
+        <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+        Impossible de charger les dépenses.
+      </div>
+
+      <ion-list *ngIf="!expensesError && expenses.length > 0" class="expenses-list" aria-label="Liste des dépenses">
+        <ion-item
+          *ngFor="let e of expenses"
+          detail="true"
+          button="true"
+          (click)="navigateToExpense(e)"
+          class="expense-item"
+          [attr.aria-label]="e.description + ', ' + formatAmount(e.montant)"
+        >
+          <ion-label>
+            <h3 class="expense-item__desc">{{ e.description }}</h3>
+            <p class="expense-item__meta">
+              {{ e.payeur.prenom }} · {{ e.date_depense | date:'dd/MM/yyyy' }}
+            </p>
+          </ion-label>
+          <ion-note slot="end" class="expense-item__amount">
+            {{ formatAmount(e.montant) }}
+          </ion-note>
+        </ion-item>
+      </ion-list>
+
+      <div *ngIf="!expensesError && expenses.length === 0" class="empty-expenses" role="status">
+        <ion-icon name="receipt-outline" class="empty-icon" aria-hidden="true"></ion-icon>
+        <p class="empty-text">Aucune dépense pour l'instant.</p>
+        <ion-button
+          fill="outline"
+          (click)="navigateToAddExpense()"
+          aria-label="Ajouter la première dépense"
+          class="empty-add-btn"
+        >
+          Ajouter une dépense
+        </ion-button>
+      </div>
+    </ng-container>
+
+    <!-- TODO: expose `role` in GET /api/groups/{id} response to restrict delete to creator -->
+    <ion-button
+      expand="block"
+      color="danger"
+      (click)="confirmDelete()"
+      [disabled]="deleting"
+      class="delete-btn"
+      aria-label="Supprimer le groupe"
+    >
+      {{ deleting ? 'Suppression…' : 'Supprimer le groupe' }}
+    </ion-button>
+  </ng-container>
+</ion-content>

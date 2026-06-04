@@ -1,4 +1,217 @@
-.placeholder {
-  color: var(--text-secondary);
+// Statistiques shell — charte tokens only. No hardcoded colors.
+
+// ---- Header section ----
+
+.stats-header {
+  margin-bottom: var(--space-300);
+}
+
+.stats-title {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--brand-navy-800);
+  margin: 0 0 var(--space-100) 0;
+  line-height: 1.2;
+}
+
+.stats-subtitle {
   font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+// ---- Period segment ----
+
+.period-segment {
+  margin-bottom: var(--space-300);
+  --background: var(--surface-cream);
+  --color: var(--text-secondary);
+  --color-checked: var(--brand-navy-800);
+  --indicator-color: var(--brand-navy-800);
+  border-radius: var(--radius-button);
+}
+
+// ---- Chart card ----
+
+.chart-card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  margin-bottom: var(--space-300);
+  --background: var(--surface-white);
+}
+
+.chart-card-title {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 220px;
+}
+
+.chart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  gap: var(--space-100);
+  text-align: center;
+}
+
+.chart-icon {
+  font-size: 56px;
+  color: var(--text-tertiary);
+}
+
+.chart-empty-text {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+// ---- State banners ----
+
+.state-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-100);
+  padding: var(--space-150) var(--space-200);
+  border-radius: var(--radius-button);
+  font-family: var(--font-body);
+  font-size: 14px;
+  margin-bottom: var(--space-200);
+}
+
+.state-banner--loading {
+  background: var(--surface-cream);
+  color: var(--text-secondary);
+}
+
+.state-banner--error {
+  background: var(--surface-cream);
+  color: var(--color-error);
+}
+
+.empty-cats-text {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  text-align: center;
+}
+
+// ---- Categories card ----
+
+.categories-card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  margin-bottom: var(--space-300);
+  --background: var(--surface-white);
+}
+
+.categories-card-title {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-150) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-150);
+}
+
+.category-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-100);
+}
+
+.category-label {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.category-bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-cream);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.category-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--brand-navy-500);
+  border-radius: var(--radius-pill);
+}
+
+.category-amount {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 72px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+// ---- Summary cards row ----
+
+.summary-row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-150);
+  margin-bottom: var(--space-300);
+}
+
+.summary-card {
+  flex: 1;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  --background: var(--surface-white);
+  margin: 0;
+
+  ion-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-050);
+    padding: var(--space-150) var(--space-100);
+    text-align: center;
+  }
+}
+
+.summary-value {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--brand-navy-800);
+  text-align: center;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.summary-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+  text-align: center;
 }

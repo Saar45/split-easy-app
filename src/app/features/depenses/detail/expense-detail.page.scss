@@ -1,0 +1,76 @@
+.expense-card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  margin-bottom: var(--space-300);
+
+  &__title {
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-weight: 600;
+  }
+
+  &__amount {
+    font-size: 22px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums lining-nums;
+    color: var(--brand-navy-800);
+    margin-top: var(--space-050);
+  }
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-100);
+  padding: var(--space-100) 0;
+  border-bottom: 1px solid var(--surface-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__label {
+    color: var(--text-secondary);
+    font-size: 13px;
+    min-width: 90px;
+  }
+
+  &__value {
+    color: var(--text-primary);
+    font-family: var(--font-body);
+  }
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: var(--space-300) 0 var(--space-100);
+}
+
+.breakdown-list {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  overflow: hidden;
+}
+
+.breakdown-item {
+  --background: var(--surface-white);
+}
+
+.breakdown-name {
+  color: var(--text-primary);
+  font-weight: 500;
+  margin: 0;
+}
+
+.breakdown-amount {
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--brand-navy-800);
+  font-weight: 600;
+}
+
+.page-spinner {
+  display: block;
+  margin: var(--space-600) auto 0;
+}

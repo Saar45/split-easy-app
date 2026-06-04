@@ -1,9 +1,139 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Accueil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToNotifications()" aria-label="Voir les notifications" class="notif-bell">
+        <ion-icon name="notifications-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+        <ion-badge
+          *ngIf="(unreadCount$ | async) as count"
+          [hidden]="count === 0"
+          color="danger"
+          class="notif-badge"
+          [attr.aria-label]="count + ' notification(s) non lue(s)'"
+        >
+          {{ count > 9 ? '9+' : count }}
+        </ion-badge>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <p class="placeholder">Écran « Accueil » — à implémenter.</p>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-wrapper" aria-live="polite" aria-label="Chargement en cours">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="!loading && error" class="error-wrapper" aria-live="assertive">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+    <p>Impossible de charger le tableau de bord. Veuillez reessayer.</p>
+    <ion-button fill="outline" size="small" (click)="ngOnInit()">Reessayer</ion-button>
+  </div>
+
+  <!-- Content -->
+  <ng-container *ngIf="!loading && !error && summary">
+
+    <h1 class="greeting">Bonjour, {{ prenom }}</h1>
+
+    <!-- Card 1: Solde net global -->
+    <ion-card class="summary-card" button (click)="goToGroupes()" aria-label="Voir les groupes">
+      <ion-card-content class="solde-card">
+        <p class="card-label">Solde net</p>
+        <p
+          class="solde-amount amount"
+          [class.positive]="!isNegative(summary.solde_net)"
+          [class.negative]="isNegative(summary.solde_net)"
+          aria-live="polite"
+        >
+          {{ formatAmount(summary.solde_net) }}
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Card 2: Tu dois / On te doit -->
+    <ion-card class="summary-card">
+      <ion-card-content class="dual-stats">
+        <div class="stat-item">
+          <p class="stat-label">Tu dois</p>
+          <p class="stat-amount amount negative">{{ formatAmount(summary.total_du) }}</p>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <p class="stat-label">On te doit</p>
+          <p class="stat-amount amount positive">{{ formatAmount(summary.total_a_recevoir) }}</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Card 3: Dernieres depenses -->
+    <ion-card class="summary-card">
+      <ion-card-header>
+        <ion-card-title class="section-title">Dernieres depenses</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="expenses-list">
+        <ng-container *ngIf="summary.dernieres_depenses.length > 0; else noExpenses">
+          <ion-item
+            *ngFor="let depense of summary.dernieres_depenses.slice(0, 3)"
+            button
+            detail="false"
+            (click)="goToExpense(depense.id)"
+            class="expense-item"
+            [attr.aria-label]="depense.description + ', ' + formatAmount(depense.montant)"
+          >
+            <ion-label>
+              <p class="expense-description">{{ depense.description }}</p>
+              <p class="expense-meta">
+                {{ depense.groupe.nom }} - paye par {{ depense.payeur.prenom }}
+              </p>
+            </ion-label>
+            <span class="expense-amount amount" slot="end">{{ formatAmount(depense.montant) }}</span>
+          </ion-item>
+        </ng-container>
+        <ng-template #noExpenses>
+          <p class="empty-message">Aucune depense recente</p>
+        </ng-template>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Card 4: Invitations en attente -->
+    <ion-card
+      *ngIf="summary.invitations_en_attente > 0; else noInvitations"
+      class="summary-card invitation-card"
+    >
+      <ion-card-content class="invitation-content">
+        <div class="invitation-info">
+          <ion-icon name="mail-outline" aria-hidden="true" class="invitation-icon"></ion-icon>
+          <div>
+            <p class="invitation-title">Invitations en attente</p>
+            <p class="invitation-count">
+              <ion-badge color="primary" aria-label="{{ summary.invitations_en_attente }} invitation(s) en attente">
+                {{ summary.invitations_en_attente }}
+              </ion-badge>
+            </p>
+          </div>
+        </div>
+        <ion-button
+          fill="solid"
+          size="small"
+          class="invitation-btn"
+          (click)="goToInvitations()"
+          aria-label="Voir les invitations en attente"
+        >
+          Voir
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ng-template #noInvitations>
+      <ion-card class="summary-card">
+        <ion-card-content>
+          <p class="empty-message">Aucune invitation en attente</p>
+        </ion-card-content>
+      </ion-card>
+    </ng-template>
+
+  </ng-container>
+
 </ion-content>

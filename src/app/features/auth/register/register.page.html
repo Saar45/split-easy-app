@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/auth/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Créer un compte</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="auth-wrap">
+    <h1 class="auth-title">Rejoindre Split-Easy</h1>
+    <p class="auth-subtitle">Crée ton compte pour partager des dépenses avec ton groupe.</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+      <ion-item>
+        <ion-input label="Prénom" labelPlacement="floating" formControlName="prenom" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input label="Nom" labelPlacement="floating" formControlName="nom" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Email"
+          labelPlacement="floating"
+          type="email"
+          autocomplete="email"
+          formControlName="email"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Mot de passe"
+          labelPlacement="floating"
+          type="password"
+          autocomplete="new-password"
+          formControlName="motDePasse"
+          required
+        ></ion-input>
+      </ion-item>
+      <p class="auth-hint">Min 8 caractères, une majuscule, une minuscule et un chiffre.</p>
+
+      <ion-item lines="none" class="cgu-item">
+        <ion-checkbox formControlName="cguAcceptees" slot="start"></ion-checkbox>
+        <ion-label class="ion-text-wrap">
+          J'accepte les CGU et la politique de confidentialité.
+        </ion-label>
+      </ion-item>
+
+      <ion-button type="submit" expand="block" [disabled]="submitting" class="auth-submit">
+        {{ submitting ? 'Création…' : 'Créer mon compte' }}
+      </ion-button>
+    </form>
+
+    <p class="auth-alt">
+      Déjà inscrit ?
+      <a routerLink="/auth/login">Se connecter</a>
+    </p>
+  </div>
+</ion-content>

@@ -1,4 +1,228 @@
-.placeholder {
+// Loading / error states
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+.error-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: var(--space-200);
   color: var(--text-secondary);
+  text-align: center;
+
+  ion-icon {
+    font-size: 48px;
+    color: var(--color-error);
+  }
+
+  p {
+    font-family: var(--font-body);
+    font-size: 15px;
+  }
+}
+
+// Greeting
+.greeting {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--brand-navy-800);
+  margin-bottom: var(--space-300);
+}
+
+// Cards layout
+.summary-card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  background: var(--surface-white);
+  margin-bottom: var(--space-200);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Solde net card
+.solde-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-300) var(--space-200);
+
+  .card-label {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-100);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .solde-amount {
+    font-family: var(--font-body);
+    font-size: 36px;
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+// Dual stats card
+.dual-stats {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: var(--space-200);
+
+  .stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-050);
+  }
+
+  .stat-divider {
+    width: 1px;
+    height: 48px;
+    background-color: var(--surface-border);
+  }
+
+  .stat-label {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .stat-amount {
+    font-family: var(--font-body);
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+// Amount colors
+.positive {
+  color: var(--color-success);
+}
+
+.negative {
+  color: var(--color-error);
+}
+
+// Section title
+.section-title {
   font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+// Expenses list
+.expenses-list {
+  padding-top: 0;
+  padding-inline: 0;
+
+  .expense-item {
+    --padding-start: var(--space-200);
+    --inner-padding-end: var(--space-200);
+    --border-color: var(--surface-border);
+  }
+
+  .expense-description {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-050) 0;
+  }
+
+  .expense-meta {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .expense-amount {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+// Empty state
+.empty-message {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: var(--space-200) 0;
+  margin: 0;
+}
+
+// Invitation card
+.invitation-card {
+  border-left: 4px solid var(--brand-navy-800);
+}
+
+.invitation-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-200);
+
+  .invitation-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-150);
+  }
+
+  .invitation-icon {
+    font-size: 28px;
+    color: var(--brand-navy-800);
+    flex-shrink: 0;
+  }
+
+  .invitation-title {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-050) 0;
+  }
+
+  .invitation-count {
+    margin: 0;
+  }
+
+  .invitation-btn {
+    --background: var(--brand-navy-800);
+    --border-radius: var(--radius-button);
+    flex-shrink: 0;
+  }
+}
+
+.notif-bell {
+  position: relative;
+}
+
+.notif-badge {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  font-size: 0.65rem;
+  padding: 2px 5px;
+  border-radius: 999px;
 }

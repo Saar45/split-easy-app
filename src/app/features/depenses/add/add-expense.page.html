@@ -1,0 +1,147 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" aria-label="Retour">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Ajouter une dépense</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+
+    <ion-item class="form-item" lines="none">
+      <ion-label position="stacked" class="form-label">Description <span aria-hidden="true">*</span></ion-label>
+      <ion-input
+        formControlName="description"
+        placeholder="Ex. : dîner chez Paul"
+        autocomplete="off"
+        aria-required="true"
+        class="form-input"
+      ></ion-input>
+      <ion-note *ngIf="hasError('description','required')" color="danger" class="error-note" role="alert">
+        La description est obligatoire.
+      </ion-note>
+      <ion-note *ngIf="hasError('description','minlength')" color="danger" class="error-note" role="alert">
+        Minimum 2 caractères.
+      </ion-note>
+      <ion-note *ngIf="hasError('description','maxlength')" color="danger" class="error-note" role="alert">
+        Maximum 100 caractères.
+      </ion-note>
+    </ion-item>
+
+    <ion-item class="form-item" lines="none">
+      <ion-label position="stacked" class="form-label">Montant (€) <span aria-hidden="true">*</span></ion-label>
+      <ion-input
+        formControlName="montant"
+        type="number"
+        inputmode="decimal"
+        placeholder="0,00"
+        aria-required="true"
+        class="form-input form-input--amount"
+      ></ion-input>
+      <ion-note *ngIf="hasError('montant','required')" color="danger" class="error-note" role="alert">
+        Le montant est obligatoire.
+      </ion-note>
+      <ion-note *ngIf="hasError('montant','min')" color="danger" class="error-note" role="alert">
+        Le montant doit être supérieur à 0.
+      </ion-note>
+    </ion-item>
+
+    <ion-item class="form-item" lines="none">
+      <ion-label position="stacked" class="form-label">Date <span aria-hidden="true">*</span></ion-label>
+      <ion-input
+        formControlName="date_depense"
+        type="date"
+        aria-required="true"
+        class="form-input"
+      ></ion-input>
+    </ion-item>
+
+    <div class="category-section">
+      <p class="form-label category-label">Catégorie <span aria-hidden="true">*</span></p>
+      <div class="category-chips" role="group" aria-label="Choisir une catégorie">
+        <ion-chip
+          *ngFor="let cat of categories"
+          [class.chip--selected]="form.get('id_categorie')?.value === cat.id"
+          (click)="form.get('id_categorie')?.setValue(cat.id)"
+          [attr.aria-pressed]="form.get('id_categorie')?.value === cat.id"
+          [attr.aria-label]="cat.libelle"
+          class="category-chip"
+        >
+          <ion-icon [name]="cat.icone" class="chip-icon" aria-hidden="true"></ion-icon>
+          <ion-label>{{ cat.libelle }}</ion-label>
+        </ion-chip>
+      </div>
+      <ion-note *ngIf="form.get('id_categorie')?.touched && form.get('id_categorie')?.hasError('required')" color="danger" class="error-note" role="alert">
+        Choisissez une catégorie.
+      </ion-note>
+    </div>
+
+    <div class="beneficiaires-section">
+      <p class="form-label">Bénéficiaires</p>
+      <div class="beneficiaires-chips" role="group" aria-label="Choisir les bénéficiaires">
+        <ion-chip
+          *ngFor="let m of availableMembers"
+          [class.chip--selected]="isBeneficiaire(m.id)"
+          (click)="toggleBeneficiaire(m.id)"
+          [attr.aria-pressed]="isBeneficiaire(m.id)"
+          [attr.aria-label]="m.prenom + ' ' + m.nom"
+          class="beneficiaire-chip"
+        >
+          <ion-label>{{ m.prenom }} {{ m.nom }}</ion-label>
+        </ion-chip>
+      </div>
+      <ion-note *ngIf="beneficiaireIds.length === 0" color="danger" class="error-note" role="alert">
+        Sélectionnez au moins un bénéficiaire.
+      </ion-note>
+    </div>
+
+    <div class="mode-section">
+      <p class="form-label">Mode de répartition</p>
+      <ion-segment [value]="mode" (ionChange)="setMode($any($event).detail.value)" aria-label="Mode de répartition">
+        <ion-segment-button value="equitable" aria-label="Équitable">
+          <ion-label>Équitable</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="personnalisee" aria-label="Personnalisée">
+          <ion-label>Montants</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="pourcentage" aria-label="Pourcentages">
+          <ion-label>%</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <div *ngIf="mode !== 'equitable'" class="parts-list">
+        <ion-item *ngFor="let id of beneficiaireIds" class="form-item" lines="none">
+          <ion-label position="stacked" class="form-label">
+            {{ beneficiaireLabel(id) }}
+            <span *ngIf="mode === 'pourcentage'"> (%)</span>
+            <span *ngIf="mode === 'personnalisee'"> (€)</span>
+          </ion-label>
+          <ion-input
+            type="number"
+            inputmode="decimal"
+            [value]="partInputs[id]"
+            (ionInput)="onPartChange(id, $any($event).detail.value)"
+            placeholder="0,00"
+            class="form-input"
+          ></ion-input>
+        </ion-item>
+        <ion-note *ngIf="partsError" color="danger" class="error-note" role="alert">{{ partsError }}</ion-note>
+      </div>
+    </div>
+
+    <ion-button
+      expand="block"
+      type="submit"
+      [disabled]="submitting"
+      class="submit-btn"
+      aria-label="Enregistrer la dépense"
+    >
+      {{ submitting ? 'Enregistrement…' : 'Enregistrer la dépense' }}
+    </ion-button>
+
+  </form>
+</ion-content>

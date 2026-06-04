@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" aria-label="Retour">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Détail de la dépense</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-spinner *ngIf="loading" name="crescent" class="page-spinner" aria-label="Chargement"></ion-spinner>
+
+  <ng-container *ngIf="!loading && expense">
+
+    <ion-card class="expense-card">
+      <ion-card-header>
+        <ion-card-title class="expense-card__title">{{ expense.description }}</ion-card-title>
+        <ion-card-subtitle class="expense-card__amount" aria-label="Montant total">
+          {{ formatAmount(expense.montant) }}
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="detail-row">
+          <span class="detail-row__label">Catégorie</span>
+          <span class="detail-row__value">{{ expense.categorie.libelle }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-row__label">Payé par</span>
+          <span class="detail-row__value">{{ expense.payeur.prenom }} {{ expense.payeur.nom }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-row__label">Date</span>
+          <span class="detail-row__value">{{ expense.date_depense | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-row__label">Répartition</span>
+          <span class="detail-row__value">{{ expense.type_repartition }}</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ng-container *ngIf="expense.beneficiaires && expense.beneficiaires.length > 0">
+      <h2 class="section-title">Répartition</h2>
+      <ion-list class="breakdown-list" aria-label="Répartition entre bénéficiaires">
+        <ion-item
+          *ngFor="let b of expense.beneficiaires"
+          lines="inset"
+          class="breakdown-item"
+        >
+          <ion-label>
+            <p class="breakdown-name">{{ b.prenom }} {{ b.nom }}</p>
+          </ion-label>
+          <ion-note slot="end" class="breakdown-amount" aria-label="Part de {{ b.prenom }}">
+            {{ formatAmount(b.montant_part) }}
+          </ion-note>
+        </ion-item>
+      </ion-list>
+    </ng-container>
+
+  </ng-container>
+</ion-content>
