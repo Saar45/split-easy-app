@@ -92,6 +92,15 @@ npx ng test --watch=false --browsers=ChromeHeadless --code-coverage
 
 Mêmes comptes que le backend (voir README du repo `split-easy-api`).
 
+## Documentation et suivi
+
+- Cahier des charges technique et dossier de projet v3.0 : remis hors repo (PDF Teams jury).
+- Chapitre Jalon 5 du dossier : remis hors repo (Markdown Teams jury).
+- Documentation par feature (F1 à F9) : voir [`docs/features/` dans split-easy-api](https://github.com/Saar45/split-easy-api/tree/main/docs/features) et [`docs/features/` ici](docs/features/).
+- Bilan Jalon 5 : voir [`docs/jalon5-summary.md`](https://github.com/Saar45/split-easy-api/blob/main/docs/jalon5-summary.md) dans split-easy-api.
+- Suivi opérationnel : [GitHub Issues](https://github.com/Saar45/split-easy-app/issues) et [Pull Requests](https://github.com/Saar45/split-easy-app/pulls).
+- Backend Symfony : [`Saar45/split-easy-api`](https://github.com/Saar45/split-easy-api).
+
 ## Statut
 
-v1.0.0 feature-complete et conforme au dossier v3.0.
+Tag de livraison Jalon 5 : [`v1.0.0`](https://github.com/Saar45/split-easy-app/releases/tag/v1.0.0). Feature-complete et conforme au dossier v3.0.
