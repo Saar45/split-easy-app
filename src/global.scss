@@ -142,3 +142,21 @@ button.row-card {
 .row-card__amount.negative {
   color: var(--color-error);
 }
+
+/* Lien "voir tout" en pied de section */
+.see-all-link {
+  background: none;
+  border: none;
+  min-height: 44px;
+  padding: var(--space-100) 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-link);
+  cursor: pointer;
+}
+
+/* Espacement standard entre sections de page */
+.section {
+  margin-bottom: var(--space-300);
+}

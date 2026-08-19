@@ -159,22 +159,6 @@
 }
 
 // Sections : caption majuscules
-.section {
-  margin-bottom: var(--space-300);
-}
-
-.see-all-link {
-  background: none;
-  border: none;
-  min-height: 44px;
-  padding: var(--space-100) 0;
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-link);
-  cursor: pointer;
-}
-
 // Empty state
 .empty-message {
   font-family: var(--font-body);
