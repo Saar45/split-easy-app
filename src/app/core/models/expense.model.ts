@@ -21,6 +21,13 @@ export interface Expense {
   beneficiaires?: BeneficiairePart[];
 }
 
+export interface TicketScanResult {
+  montant: string | null;
+  date: string | null;
+  commercant: string | null;
+  texteBrut: string;
+}
+
 export interface CreateExpensePayload {
   description: string;
   montant: number;
