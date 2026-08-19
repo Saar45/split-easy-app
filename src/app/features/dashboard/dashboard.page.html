@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Accueil</ion-title>
+    <ion-title class="wordmark">Split·Easy</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="goToNotifications()" aria-label="Voir les notifications" class="notif-bell">
         <ion-icon name="notifications-outline" slot="icon-only" aria-hidden="true"></ion-icon>
@@ -13,6 +13,9 @@
         >
           {{ count > 9 ? '9+' : count }}
         </ion-badge>
+      </ion-button>
+      <ion-button (click)="goToProfil()" aria-label="Voir mon profil" class="avatar-btn">
+        <span class="avatar" aria-hidden="true">{{ initialOf(prenom) }}</span>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -37,71 +40,112 @@
 
     <h1 class="greeting">Bonjour, {{ prenom }}</h1>
 
-    <!-- Card 1: Solde net global -->
-    <ion-card class="summary-card" button (click)="goToGroupes()" aria-label="Voir les groupes">
-      <ion-card-content class="solde-card">
-        <p class="card-label">Solde net</p>
-        <p
-          class="solde-amount amount"
-          [class.positive]="!isNegative(summary.solde_net)"
-          [class.negative]="isNegative(summary.solde_net)"
-          aria-live="polite"
+    <!-- Carte solde global (maquette §8.1) -->
+    <section class="balance-card" aria-live="polite">
+      <p class="balance-card__label">Solde global</p>
+      <p class="balance-card__amount amount">{{ formatAmount(summary.solde_net) }}</p>
+      <div class="balance-card__panel">
+        <div class="balance-card__tile">
+          <span class="tile-label">On te doit</span>
+          <span class="tile-amount amount tile-amount--credit">{{ formatAmount(summary.total_a_recevoir) }}</span>
+        </div>
+        <div class="balance-card__divider" aria-hidden="true"></div>
+        <div class="balance-card__tile">
+          <span class="tile-label">Tu dois</span>
+          <span class="tile-amount amount tile-amount--debt">{{ formatAmount(summary.total_du) }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions rapides -->
+    <div class="quick-actions">
+      <button type="button" class="quick-btn quick-btn--gold" (click)="quickAddExpense()" aria-label="Ajouter une dépense">
+        <ion-icon name="add" aria-hidden="true"></ion-icon>
+        Dépense
+      </button>
+      <button type="button" class="quick-btn quick-btn--scan" (click)="quickScan()" aria-label="Scanner un ticket">
+        <ion-icon name="scan-outline" aria-hidden="true"></ion-icon>
+        Scanner
+      </button>
+    </div>
+
+    <!-- Mes groupes -->
+    <section class="section">
+      <h2 class="section-caption">Mes groupes</h2>
+
+      <ng-container *ngIf="groupOverviews.length > 0; else noGroups">
+        <button
+          type="button"
+          class="row-card"
+          *ngFor="let g of groupOverviews"
+          (click)="goToGroup(g.group.id)"
+          [attr.aria-label]="'Ouvrir le groupe ' + g.group.nom"
         >
-          {{ formatAmount(summary.solde_net) }}
-        </p>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Card 2: Tu dois / On te doit -->
-    <ion-card class="summary-card">
-      <ion-card-content class="dual-stats">
-        <div class="stat-item">
-          <p class="stat-label">Tu dois</p>
-          <p class="stat-amount amount negative">{{ formatAmount(summary.total_du) }}</p>
-        </div>
-        <div class="stat-divider" aria-hidden="true"></div>
-        <div class="stat-item">
-          <p class="stat-label">On te doit</p>
-          <p class="stat-amount amount positive">{{ formatAmount(summary.total_a_recevoir) }}</p>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Card 3: Dernieres depenses -->
-    <ion-card class="summary-card">
-      <ion-card-header>
-        <ion-card-title class="section-title">Dernieres depenses</ion-card-title>
-      </ion-card-header>
-      <ion-card-content class="expenses-list">
-        <ng-container *ngIf="summary.dernieres_depenses.length > 0; else noExpenses">
-          <ion-item
-            *ngFor="let depense of summary.dernieres_depenses.slice(0, 3)"
-            button
-            detail="false"
-            (click)="goToExpense(depense.id)"
-            class="expense-item"
-            [attr.aria-label]="depense.description + ', ' + formatAmount(depense.montant)"
+          <span class="avatar" aria-hidden="true">{{ initialOf(g.group.nom) }}</span>
+          <span class="row-card__info">
+            <span class="row-card__title">{{ g.group.nom }}</span>
+            <span class="row-card__meta" *ngIf="g.membres !== null">
+              {{ g.membres }} {{ g.membres > 1 ? 'membres' : 'membre' }}
+            </span>
+          </span>
+          <span
+            *ngIf="g.soldePerso !== null"
+            class="row-card__amount amount"
+            [class.positive]="isPositive(g.soldePerso)"
+            [class.negative]="isNegative(g.soldePerso)"
           >
-            <ion-label>
-              <p class="expense-description">{{ depense.description }}</p>
-              <p class="expense-meta">
-                {{ depense.groupe.nom }} - paye par {{ depense.payeur.prenom }}
-              </p>
-            </ion-label>
-            <span class="expense-amount amount" slot="end">{{ formatAmount(depense.montant) }}</span>
-          </ion-item>
-        </ng-container>
-        <ng-template #noExpenses>
-          <p class="empty-message">Aucune depense recente</p>
-        </ng-template>
-      </ion-card-content>
-    </ion-card>
+            {{ formatAmount(g.soldePerso) }}
+          </span>
+        </button>
 
-    <!-- Card 4: Invitations en attente -->
-    <ion-card
-      *ngIf="summary.invitations_en_attente > 0; else noInvitations"
-      class="summary-card invitation-card"
-    >
+        <button
+          type="button"
+          *ngIf="totalGroups > groupOverviews.length"
+          class="see-all-link"
+          (click)="goToGroupes()"
+          aria-label="Voir tous les groupes"
+        >
+          Voir tous les groupes →
+        </button>
+      </ng-container>
+
+      <ng-template #noGroups>
+        <p class="empty-message">Aucun groupe pour l'instant.</p>
+      </ng-template>
+    </section>
+
+    <!-- Activité récente -->
+    <section class="section">
+      <h2 class="section-caption">Activité récente</h2>
+
+      <ng-container *ngIf="summary.dernieres_depenses.length > 0; else noExpenses">
+        <button
+          type="button"
+          class="row-card"
+          *ngFor="let depense of summary.dernieres_depenses.slice(0, 3)"
+          (click)="goToExpense(depense.id)"
+          [attr.aria-label]="depense.description + ', ' + formatAmount(depense.montant)"
+        >
+          <span class="avatar" aria-hidden="true">{{ initialOf(depense.payeur.prenom) }}</span>
+          <span class="row-card__info">
+            <span class="row-card__title">
+              {{ depense.payeur.prenom }} a ajouté
+              <span class="amount">{{ formatAmount(depense.montant) }}</span>
+            </span>
+            <span class="row-card__meta">
+              {{ depense.description }} · {{ depense.date_depense | timeAgo }}
+            </span>
+          </span>
+        </button>
+      </ng-container>
+
+      <ng-template #noExpenses>
+        <p class="empty-message">Aucune depense recente</p>
+      </ng-template>
+    </section>
+
+    <!-- Invitations en attente -->
+    <ion-card *ngIf="summary.invitations_en_attente > 0" class="summary-card invitation-card">
       <ion-card-content class="invitation-content">
         <div class="invitation-info">
           <ion-icon name="mail-outline" aria-hidden="true" class="invitation-icon"></ion-icon>
@@ -125,14 +169,6 @@
         </ion-button>
       </ion-card-content>
     </ion-card>
-
-    <ng-template #noInvitations>
-      <ion-card class="summary-card">
-        <ion-card-content>
-          <p class="empty-message">Aucune invitation en attente</p>
-        </ion-card-content>
-      </ion-card>
-    </ng-template>
 
   </ng-container>
 

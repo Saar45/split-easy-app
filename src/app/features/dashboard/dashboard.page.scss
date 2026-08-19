@@ -27,6 +27,21 @@
   }
 }
 
+// Header : wordmark + avatar
+.wordmark {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--brand-navy-800);
+}
+
+.avatar-btn {
+  --padding-start: var(--space-050);
+  --padding-end: var(--space-050);
+  min-width: 44px;
+  min-height: 44px;
+}
+
 // Greeting
 .greeting {
   font-family: var(--font-heading);
@@ -36,128 +51,128 @@
   margin-bottom: var(--space-300);
 }
 
-// Cards layout
-.summary-card {
+// Carte solde global : fond navy, rayon signature
+.balance-card {
+  background: var(--brand-navy-800);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-rest);
-  background: var(--surface-white);
+  padding: var(--space-300) var(--space-200) var(--space-200);
   margin-bottom: var(--space-200);
+  text-align: center;
 
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-// Solde net card
-.solde-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--space-300) var(--space-200);
-
-  .card-label {
+  &__label {
     font-family: var(--font-body);
     font-size: 13px;
     font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: var(--space-100);
+    color: var(--surface-offwhite);
     text-transform: uppercase;
     letter-spacing: 0.06em;
+    margin: 0 0 var(--space-100) 0;
   }
 
-  .solde-amount {
+  &__amount {
     font-family: var(--font-body);
-    font-size: 36px;
+    font-size: 34px;
     font-weight: 700;
-    margin: 0;
+    color: var(--surface-white);
+    margin: 0 0 var(--space-200) 0;
   }
-}
 
-// Dual stats card
-.dual-stats {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: var(--space-200);
+  &__panel {
+    display: flex;
+    align-items: center;
+    background: var(--surface-navy-panel);
+    border-radius: var(--radius-button);
+    padding: var(--space-150) var(--space-100);
+  }
 
-  .stat-item {
+  &__tile {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: var(--space-050);
   }
 
-  .stat-divider {
+  &__divider {
     width: 1px;
-    height: 48px;
-    background-color: var(--surface-border);
-  }
-
-  .stat-label {
-    font-family: var(--font-body);
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin: 0;
-  }
-
-  .stat-amount {
-    font-family: var(--font-body);
-    font-size: 22px;
-    font-weight: 700;
-    margin: 0;
+    height: 36px;
+    background: var(--brand-navy-800);
   }
 }
 
-// Amount colors
-.positive {
-  color: var(--color-success);
-}
-
-.negative {
-  color: var(--color-error);
-}
-
-// Section title
-.section-title {
+.tile-label {
   font-family: var(--font-body);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 12px;
+  color: var(--surface-offwhite);
 }
 
-// Expenses list
-.expenses-list {
-  padding-top: 0;
-  padding-inline: 0;
+.tile-amount {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
 
-  .expense-item {
-    --padding-start: var(--space-200);
-    --inner-padding-end: var(--space-200);
-    --border-color: var(--surface-border);
+  &--credit {
+    color: var(--color-success-ondark);
   }
 
-  .expense-description {
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 0 0 var(--space-050) 0;
+  &--debt {
+    color: var(--color-error-ondark);
+  }
+}
+
+// Actions rapides : gold décoratif + secondaire sage
+.quick-actions {
+  display: flex;
+  gap: var(--space-150);
+  margin-bottom: var(--space-300);
+}
+
+.quick-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-100);
+  min-height: 48px;
+  border-radius: var(--radius-button);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 18px;
   }
 
-  .expense-meta {
-    font-family: var(--font-body);
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin: 0;
+  &--gold {
+    background: var(--brand-gold-400);
+    border: none;
+    color: var(--brand-navy-800);
+    box-shadow: var(--shadow-rest);
   }
 
-  .expense-amount {
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
+  &--scan {
+    background: var(--surface-sage-tint);
+    border: 1px solid var(--brand-sage-400);
+    color: var(--brand-sage-700);
   }
+}
+
+// Sections : caption majuscules
+.section {
+  margin-bottom: var(--space-300);
+}
+
+.see-all-link {
+  background: none;
+  border: none;
+  min-height: 44px;
+  padding: var(--space-100) 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-link);
+  cursor: pointer;
 }
 
 // Empty state
@@ -171,6 +186,13 @@
 }
 
 // Invitation card
+.summary-card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  background: var(--surface-white);
+  margin-bottom: var(--space-200);
+}
+
 .invitation-card {
   border-left: 4px solid var(--brand-navy-800);
 }
