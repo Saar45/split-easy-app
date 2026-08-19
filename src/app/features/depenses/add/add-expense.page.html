@@ -12,6 +12,32 @@
 <ion-content class="ion-padding">
   <form [formGroup]="form" (ngSubmit)="submit()">
 
+    <div class="ocr-zone">
+      <ion-icon name="camera-outline" class="ocr-icon" aria-hidden="true"></ion-icon>
+      <p class="ocr-text">Scannez votre ticket pour préremplir la dépense automatiquement.</p>
+      <ion-button
+        type="button"
+        fill="outline"
+        size="small"
+        class="ocr-btn"
+        [disabled]="scanning"
+        (click)="ticketInput.click()"
+        aria-label="Scanner un ticket"
+      >
+        <ion-icon slot="start" name="scan-outline" aria-hidden="true"></ion-icon>
+        {{ scanning ? 'Analyse en cours…' : 'Scanner un ticket' }}
+      </ion-button>
+      <input
+        #ticketInput
+        type="file"
+        accept="image/*"
+        capture="environment"
+        class="ocr-file-input"
+        aria-hidden="true"
+        (change)="onTicketSelected($event)"
+      />
+    </div>
+
     <ion-item class="form-item" lines="none">
       <ion-label position="stacked" class="form-label">Description <span aria-hidden="true">*</span></ion-label>
       <ion-input
