@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { ToastController, LoadingController } from '@ionic/angular';
 import { firstValueFrom } from 'rxjs';
 
 import { ExpenseService } from '../../../core/services/expense.service';
@@ -11,6 +11,8 @@ import { CategoryService } from '../../../core/services/category.service';
 import { Categorie } from '../../../core/models/categorie.model';
 import { CreateExpensePayload, SplitMode } from '../../../core/models/expense.model';
 import { GroupMember } from '../../../core/models/invitation.model';
+
+const MAX_TICKET_SIZE_BYTES = 5 * 1024 * 1024;
 
 @Component({
   selector: 'app-add-expense',
@@ -27,8 +29,10 @@ export class AddExpensePage implements OnInit {
   private readonly invitationService = inject(InvitationService);
   private readonly categoryService = inject(CategoryService);
   private readonly toast = inject(ToastController);
+  private readonly loadingCtrl = inject(LoadingController);
 
   categories: Categorie[] = [];
+  scanning = false;
 
   groupId = 0;
   submitting = false;
@@ -243,6 +247,77 @@ export class AddExpensePage implements OnInit {
         await t.present();
       },
     });
+  }
+
+  async onTicketSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (file.size > MAX_TICKET_SIZE_BYTES) {
+      input.value = '';
+      const t = await this.toast.create({
+        message: 'Le fichier dépasse 5 Mo, choisissez une image plus légère.',
+        duration: 3000,
+        color: 'warning',
+        position: 'top',
+      });
+      await t.present();
+      return;
+    }
+
+    this.scanning = true;
+    const loading = await this.loadingCtrl.create({
+      message: 'Analyse du ticket…',
+    });
+    await loading.present();
+
+    this.expenseService.scanTicket(file).subscribe({
+      next: async (result) => {
+        this.prefillFromScan(result);
+        this.scanning = false;
+        input.value = '';
+        await loading.dismiss();
+      },
+      error: async () => {
+        this.scanning = false;
+        input.value = '';
+        await loading.dismiss();
+        const t = await this.toast.create({
+          message: 'Analyse impossible, saisissez manuellement.',
+          duration: 3000,
+          color: 'medium',
+          position: 'top',
+        });
+        await t.present();
+      },
+    });
+  }
+
+  private prefillFromScan(result: {
+    montant: string | null;
+    date: string | null;
+    commercant: string | null;
+  }): void {
+    // Ne préremplit que les champs que l'utilisateur n'a pas encore modifiés (pristine),
+    // pour ne jamais écraser une saisie manuelle déjà en cours.
+    const montantCtrl = this.form.get('montant');
+    if (result.montant && montantCtrl?.pristine) {
+      montantCtrl.setValue(Number(result.montant));
+    }
+
+    const dateCtrl = this.form.get('date_depense');
+    if (result.date && dateCtrl?.pristine) {
+      dateCtrl.setValue(result.date);
+    }
+
+    const descCtrl = this.form.get('description');
+    if (result.commercant && descCtrl?.pristine) {
+      descCtrl.setValue(result.commercant);
+    }
   }
 
   goBack(): void {

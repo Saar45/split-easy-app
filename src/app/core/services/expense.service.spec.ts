@@ -131,4 +131,43 @@ describe('ExpenseService', () => {
       req.flush({ ...mockExpense, type_repartition: 'pourcentage' });
     });
   });
+
+  describe('scanTicket()', () => {
+    it('should POST /api/expenses/scan-ticket with multipart FormData and return parsed fields', () => {
+      const file = new File(['fake-image-content'], 'ticket.jpg', { type: 'image/jpeg' });
+      const mockResult = {
+        montant: '23.45',
+        date: '2026-07-15',
+        commercant: 'CARREFOUR',
+        texteBrut: 'CARREFOUR\nTOTAL 23.45',
+      };
+
+      service.scanTicket(file).subscribe((result) => {
+        expect(result).toEqual(mockResult);
+      });
+
+      const req = httpMock.expectOne(`${base}/expenses/scan-ticket`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body instanceof FormData).toBeTrue();
+      expect((req.request.body as FormData).get('ticket')).toBe(file);
+      req.flush(mockResult);
+    });
+
+    it('should propagate a 502 error when the OCR service is unavailable', () => {
+      const file = new File(['fake-image-content'], 'ticket.jpg', { type: 'image/jpeg' });
+      let receivedStatus: number | undefined;
+
+      service.scanTicket(file).subscribe({
+        next: () => fail('expected an error, not a success'),
+        error: (err) => {
+          receivedStatus = err.status;
+        },
+      });
+
+      const req = httpMock.expectOne(`${base}/expenses/scan-ticket`);
+      req.flush('OCR service unavailable', { status: 502, statusText: 'Bad Gateway' });
+
+      expect(receivedStatus).toBe(502);
+    });
+  });
 });

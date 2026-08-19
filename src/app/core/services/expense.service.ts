@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Expense, CreateExpensePayload } from '../models/expense.model';
+import { Expense, CreateExpensePayload, TicketScanResult } from '../models/expense.model';
 
 @Injectable({ providedIn: 'root' })
 export class ExpenseService {
@@ -20,5 +20,11 @@ export class ExpenseService {
 
   create(groupId: number, payload: CreateExpensePayload): Observable<Expense> {
     return this.http.post<Expense>(`${this.base}/groups/${groupId}/expenses`, payload);
+  }
+
+  scanTicket(file: File): Observable<TicketScanResult> {
+    const formData = new FormData();
+    formData.append('ticket', file);
+    return this.http.post<TicketScanResult>(`${this.base}/expenses/scan-ticket`, formData);
   }
 }
