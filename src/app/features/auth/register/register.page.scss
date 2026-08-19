@@ -51,7 +51,52 @@
 .auth-hint {
   font-size: 13px;
   color: var(--text-secondary);
-  margin: -8px 4px var(--space-200);
+  margin: -8px 4px var(--space-100);
+}
+
+.password-strength {
+  margin: 0 4px var(--space-200);
+}
+
+.password-strength-bar {
+  display: flex;
+  gap: var(--space-050);
+  height: 4px;
+}
+
+.segment {
+  flex: 1;
+  border-radius: var(--radius-badge);
+  background: var(--surface-border);
+
+  &.filled[data-level='faible'] {
+    background: var(--color-error);
+  }
+
+  &.filled[data-level='moyen'] {
+    background: var(--color-warning);
+  }
+
+  &.filled[data-level='fort'] {
+    background: var(--color-success);
+  }
+}
+
+.password-strength-label {
+  font-size: 13px;
+  margin: var(--space-050) 0 0;
+
+  &[data-level='faible'] {
+    color: var(--color-error);
+  }
+
+  &[data-level='moyen'] {
+    color: var(--color-warning);
+  }
+
+  &[data-level='fort'] {
+    color: var(--color-success);
+  }
 }
 
 .cgu-item {

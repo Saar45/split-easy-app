@@ -65,6 +65,37 @@ describe('RegisterPage', () => {
     expect(button.getAttribute('aria-label')).toBe('Masquer le mot de passe');
   });
 
+  it('should not show the strength indicator when the password is empty', () => {
+    const indicator = fixture.nativeElement.querySelector('.password-strength');
+    expect(indicator).toBeNull();
+  });
+
+  it('should show the strength indicator once a password is entered', () => {
+    component.form.controls['motDePasse'].setValue('Aa1!aaaa');
+    fixture.detectChanges();
+
+    const indicator = fixture.nativeElement.querySelector('.password-strength');
+    expect(indicator).not.toBeNull();
+    expect(component.passwordStrength.level).toBe('fort');
+    expect(indicator.textContent).toContain('Fort');
+  });
+
+  it('should reflect a weak password in the indicator', () => {
+    component.form.controls['motDePasse'].setValue('aaaaaaaa');
+    fixture.detectChanges();
+
+    expect(component.passwordStrength.level).toBe('faible');
+    const label = fixture.nativeElement.querySelector('.password-strength-label');
+    expect(label.textContent).toContain('Faible');
+  });
+
+  it('should not alter form validity based on the strength indicator', () => {
+    component.form.controls['motDePasse'].setValue('aaaaaaaa');
+    fixture.detectChanges();
+
+    expect(component.form.controls['motDePasse'].valid).toBeFalse();
+  });
+
   it('should navigate to accueil after register, login and fetchCurrentUser succeed', () => {
     authServiceSpy.register.and.returnValue(
       of({ id: 1, email: 'a@a.com', nom: 'A', prenom: 'B', roles: [] }),

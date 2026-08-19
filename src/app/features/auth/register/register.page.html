@@ -57,6 +57,20 @@
       </ion-item>
       <p class="auth-hint">Min 8 caractères, une majuscule, une minuscule et un chiffre.</p>
 
+      <div class="password-strength" aria-live="polite" *ngIf="form.controls['motDePasse'].value.length > 0">
+        <div class="password-strength-bar">
+          <span
+            *ngFor="let segment of strengthSegments"
+            class="segment"
+            [class.filled]="segment <= passwordStrength.score"
+            [attr.data-level]="passwordStrength.level"
+          ></span>
+        </div>
+        <p class="password-strength-label" [attr.data-level]="passwordStrength.level">
+          Sécurité du mot de passe : {{ passwordStrength.label }}
+        </p>
+      </div>
+
       <ion-item lines="none" class="cgu-item">
         <ion-checkbox formControlName="cguAcceptees" slot="start"></ion-checkbox>
         <ion-label class="ion-text-wrap">
