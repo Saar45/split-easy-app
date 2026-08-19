@@ -33,6 +33,14 @@ export class AddExpensePage implements OnInit {
 
   categories: Categorie[] = [];
   scanning = false;
+  // Le payeur est toujours l'utilisateur courant (contrainte API).
+  payerName = '';
+
+  readonly modes: { value: SplitMode; label: string; aria: string }[] = [
+    { value: 'equitable', label: 'Équitable', aria: 'Répartition équitable' },
+    { value: 'personnalisee', label: 'Montants', aria: 'Répartition par montants' },
+    { value: 'pourcentage', label: '%', aria: 'Répartition par pourcentages' },
+  ];
 
   groupId = 0;
   submitting = false;
@@ -61,6 +69,10 @@ export class AddExpensePage implements OnInit {
 
     this.categoryService.list().subscribe({
       next: (cats) => (this.categories = cats),
+    });
+
+    firstValueFrom(this.authService.user$).then((u) => {
+      this.payerName = u ? `${u.prenom} ${u.nom}`.trim() : 'Toi';
     });
 
     // Charge la liste des membres acceptés (F7) pour permettre la sélection multi-bénéficiaires.

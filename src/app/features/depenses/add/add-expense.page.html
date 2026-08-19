@@ -1,20 +1,27 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="header-cream">
     <ion-buttons slot="start">
       <ion-button (click)="goBack()" aria-label="Retour">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+        <ion-icon slot="icon-only" name="arrow-back" aria-hidden="true"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Ajouter une dépense</ion-title>
+    <ion-title>Nouvelle dépense</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goBack()" aria-label="Annuler la saisie" class="cancel-btn">
+        Annuler
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <form [formGroup]="form" (ngSubmit)="submit()">
 
+    <!-- Zone OCR : fond sage décoratif, bordure pointillée (maquette §8.2) -->
     <div class="ocr-zone">
       <ion-icon name="camera-outline" class="ocr-icon" aria-hidden="true"></ion-icon>
-      <p class="ocr-text">Scannez votre ticket pour préremplir la dépense automatiquement.</p>
+      <p class="ocr-title">Scanner un ticket</p>
+      <p class="ocr-text">L'analyse OCR.space préremplit le montant, la date et le commerçant.</p>
       <ion-button
         type="button"
         fill="outline"
@@ -38,6 +45,26 @@
       />
     </div>
 
+    <!-- Montant focal : fond cream + bordure gold -->
+    <div class="amount-focal">
+      <label class="amount-focal__label" for="montant-input">Montant (€) <span aria-hidden="true">*</span></label>
+      <ion-input
+        id="montant-input"
+        formControlName="montant"
+        type="number"
+        inputmode="decimal"
+        placeholder="0,00"
+        aria-required="true"
+        class="amount-focal__input amount"
+      ></ion-input>
+      <ion-note *ngIf="hasError('montant','required')" color="danger" class="error-note" role="alert">
+        Le montant est obligatoire.
+      </ion-note>
+      <ion-note *ngIf="hasError('montant','min')" color="danger" class="error-note" role="alert">
+        Le montant doit être supérieur à 0.
+      </ion-note>
+    </div>
+
     <ion-item class="form-item" lines="none">
       <ion-label position="stacked" class="form-label">Description <span aria-hidden="true">*</span></ion-label>
       <ion-input
@@ -58,33 +85,27 @@
       </ion-note>
     </ion-item>
 
-    <ion-item class="form-item" lines="none">
-      <ion-label position="stacked" class="form-label">Montant (€) <span aria-hidden="true">*</span></ion-label>
-      <ion-input
-        formControlName="montant"
-        type="number"
-        inputmode="decimal"
-        placeholder="0,00"
-        aria-required="true"
-        class="form-input form-input--amount"
-      ></ion-input>
-      <ion-note *ngIf="hasError('montant','required')" color="danger" class="error-note" role="alert">
-        Le montant est obligatoire.
-      </ion-note>
-      <ion-note *ngIf="hasError('montant','min')" color="danger" class="error-note" role="alert">
-        Le montant doit être supérieur à 0.
-      </ion-note>
-    </ion-item>
-
-    <ion-item class="form-item" lines="none">
-      <ion-label position="stacked" class="form-label">Date <span aria-hidden="true">*</span></ion-label>
-      <ion-input
-        formControlName="date_depense"
-        type="date"
-        aria-required="true"
-        class="form-input"
-      ></ion-input>
-    </ion-item>
+    <!-- Date + Payé par sur la même ligne -->
+    <div class="inline-fields">
+      <ion-item class="form-item inline-fields__item" lines="none">
+        <ion-label position="stacked" class="form-label">Date <span aria-hidden="true">*</span></ion-label>
+        <ion-input
+          formControlName="date_depense"
+          type="date"
+          aria-required="true"
+          class="form-input"
+        ></ion-input>
+      </ion-item>
+      <ion-item class="form-item inline-fields__item" lines="none">
+        <ion-label position="stacked" class="form-label">Payé par</ion-label>
+        <ion-input
+          [value]="payerName"
+          readonly
+          aria-label="Payé par (toujours vous)"
+          class="form-input"
+        ></ion-input>
+      </ion-item>
+    </div>
 
     <div class="category-section">
       <p class="form-label category-label">Catégorie <span aria-hidden="true">*</span></p>
@@ -115,7 +136,7 @@
           (click)="toggleBeneficiaire(m.id)"
           [attr.aria-pressed]="isBeneficiaire(m.id)"
           [attr.aria-label]="m.prenom + ' ' + m.nom"
-          class="beneficiaire-chip"
+          class="category-chip"
         >
           <ion-label>{{ m.prenom }} {{ m.nom }}</ion-label>
         </ion-chip>
@@ -125,19 +146,21 @@
       </ion-note>
     </div>
 
+    <!-- Chips de répartition : actif navy + gold, inactifs blanc + bordure -->
     <div class="mode-section">
       <p class="form-label">Mode de répartition</p>
-      <ion-segment [value]="mode" (ionChange)="setMode($any($event).detail.value)" aria-label="Mode de répartition">
-        <ion-segment-button value="equitable" aria-label="Équitable">
-          <ion-label>Équitable</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="personnalisee" aria-label="Personnalisée">
-          <ion-label>Montants</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="pourcentage" aria-label="Pourcentages">
-          <ion-label>%</ion-label>
-        </ion-segment-button>
-      </ion-segment>
+      <div class="mode-chips" role="group" aria-label="Mode de répartition">
+        <ion-chip
+          *ngFor="let m of modes"
+          [class.mode-chip--active]="mode === m.value"
+          (click)="setMode(m.value)"
+          [attr.aria-pressed]="mode === m.value"
+          [attr.aria-label]="m.aria"
+          class="mode-chip"
+        >
+          <ion-label>{{ m.label }}</ion-label>
+        </ion-chip>
+      </div>
 
       <div *ngIf="mode !== 'equitable'" class="parts-list">
         <ion-item *ngFor="let id of beneficiaireIds" class="form-item" lines="none">
@@ -159,15 +182,19 @@
       </div>
     </div>
 
-    <ion-button
-      expand="block"
-      type="submit"
-      [disabled]="submitting"
-      class="submit-btn"
-      aria-label="Enregistrer la dépense"
-    >
-      {{ submitting ? 'Enregistrement…' : 'Enregistrer la dépense' }}
-    </ion-button>
-
   </form>
 </ion-content>
+
+<!-- CTA ancré en bas (maquette §8.2) -->
+<ion-footer class="footer-cta">
+  <ion-button
+    expand="block"
+    type="button"
+    (click)="submit()"
+    [disabled]="submitting"
+    class="submit-btn"
+    aria-label="Enregistrer la dépense"
+  >
+    {{ submitting ? 'Enregistrement…' : 'Enregistrer la dépense' }}
+  </ion-button>
+</ion-footer>
