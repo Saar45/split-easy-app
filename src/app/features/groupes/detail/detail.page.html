@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button (click)="goBack()" aria-label="Retour">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+        <ion-icon slot="icon-only" name="arrow-back" aria-hidden="true"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>{{ group?.nom ?? 'Groupe' }}</ion-title>
@@ -13,84 +13,43 @@
   <ion-spinner *ngIf="loading" name="crescent" class="page-spinner" aria-label="Chargement"></ion-spinner>
 
   <ng-container *ngIf="!loading && group">
-    <ion-card class="detail-card">
-      <ion-card-header>
-        <ion-card-title class="detail-card__title">{{ group.nom }}</ion-card-title>
-        <ion-card-subtitle *ngIf="group.description" class="detail-card__desc">
-          {{ group.description }}
-        </ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="detail-row">
-          <span class="detail-row__label">Statut</span>
-          <span class="detail-row__value">{{ group.statut }}</span>
-        </div>
-        <div class="detail-row" *ngIf="group.couleur">
-          <span class="detail-row__label">Couleur</span>
-          <span class="detail-row__swatch" [style.background]="group.couleur" aria-label="Couleur du groupe {{ group.couleur }}"></span>
-          <span class="detail-row__value">{{ group.couleur }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-row__label">Créé le</span>
-          <span class="detail-row__value">{{ group.date_creation | date:'dd/MM/yyyy' }}</span>
-        </div>
-      </ion-card-content>
-    </ion-card>
 
-    <ion-button
-      expand="block"
-      fill="solid"
-      (click)="navigateToBalances()"
-      class="balances-btn"
-      aria-label="Voir les soldes du groupe"
-    >
-      <ion-icon slot="start" name="stats-chart-outline" aria-hidden="true"></ion-icon>
-      Voir les soldes
-    </ion-button>
+    <p *ngIf="group.description" class="group-desc">{{ group.description }}</p>
 
-    <!-- Members section -->
-    <div class="members-header">
-      <h2 class="members-title">Membres</h2>
+    <!-- Avatars chevauchés + participants + inviter (maquette §8.3) -->
+    <div class="members-row" *ngIf="!loadingMembers && !membersError">
+      <div class="avatar-stack" aria-hidden="true">
+        <span
+          *ngFor="let m of acceptedMembers().slice(0, 5); let i = index"
+          class="avatar avatar-stack__item"
+          [ngClass]="avatarVariant(i)"
+        >
+          {{ initialOf(m.prenom) }}
+        </span>
+      </div>
+      <span class="members-count">
+        {{ acceptedMembers().length }} {{ acceptedMembers().length > 1 ? 'participants' : 'participant' }}
+      </span>
+      <ion-button
+        *ngIf="isCreator()"
+        fill="clear"
+        size="small"
+        class="invite-toggle"
+        (click)="toggleInvite()"
+        aria-label="Inviter un membre"
+      >
+        + Inviter
+      </ion-button>
     </div>
 
     <ion-spinner *ngIf="loadingMembers" name="crescent" class="members-spinner" aria-label="Chargement des membres"></ion-spinner>
-
-    <ng-container *ngIf="!loadingMembers && !membersError">
-      <ion-list class="members-list" aria-label="Membres acceptés">
-        <ion-item *ngFor="let m of acceptedMembers()" class="member-item">
-          <ion-label>
-            <h3 class="member-item__name">{{ m.prenom }} {{ m.nom }}</h3>
-            <p class="member-item__email">{{ m.email }}</p>
-          </ion-label>
-          <ion-badge *ngIf="m.role === 'createur'" slot="end" color="primary" class="member-item__badge">
-            Créateur
-          </ion-badge>
-        </ion-item>
-      </ion-list>
-
-      <div *ngIf="pendingMembers().length > 0" class="pending-section">
-        <h3 class="pending-title">Invitations en attente</h3>
-        <ion-list>
-          <ion-item *ngFor="let m of pendingMembers()" class="member-item member-item--pending">
-            <ion-label>
-              <h3 class="member-item__name">{{ m.prenom }} {{ m.nom }}</h3>
-              <p class="member-item__email">{{ m.email }}</p>
-            </ion-label>
-            <ion-badge slot="end" color="warning" class="member-item__badge">
-              En attente
-            </ion-badge>
-          </ion-item>
-        </ion-list>
-      </div>
-    </ng-container>
-
     <div *ngIf="!loadingMembers && membersError" class="members-error" role="alert">
       <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
       Impossible de charger les membres.
     </div>
 
     <!-- Invite section : créateur uniquement -->
-    <div *ngIf="isCreator()" class="invite-section">
+    <div *ngIf="isCreator() && showInvite" class="invite-section">
       <h3 class="invite-title">Inviter par email</h3>
       <form (ngSubmit)="submitInvite()" class="invite-form">
         <ion-input
@@ -132,63 +91,122 @@
       </div>
     </div>
 
-    <!-- Expenses section -->
-    <div class="expenses-header">
-      <h2 class="expenses-title">Dépenses</h2>
-      <ion-button
-        fill="clear"
-        size="small"
-        (click)="navigateToAddExpense()"
-        aria-label="Ajouter une dépense"
-        class="add-expense-btn"
-      >
-        <ion-icon slot="start" name="add-circle-outline" aria-hidden="true"></ion-icon>
-        Ajouter
+    <!-- Invitations en attente -->
+    <div *ngIf="!loadingMembers && !membersError && pendingMembers().length > 0" class="pending-section">
+      <h3 class="section-caption">Invitations en attente</h3>
+      <ion-list>
+        <ion-item *ngFor="let m of pendingMembers()" class="member-item member-item--pending">
+          <ion-label>
+            <h3 class="member-item__name">{{ m.prenom }} {{ m.nom }}</h3>
+            <p class="member-item__email">{{ m.email }}</p>
+          </ion-label>
+          <ion-badge slot="end" color="warning" class="member-item__badge">
+            En attente
+          </ion-badge>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- Alerte de dette (uniquement si débiteur) -->
+    <div *ngIf="isDebtor()" class="debt-alert" role="alert">
+      <ion-icon name="warning-outline" class="debt-alert__icon" aria-hidden="true"></ion-icon>
+      <div class="debt-alert__body">
+        <p class="debt-alert__text">
+          Tu dois <span class="amount">{{ formatAbs(myBalance!) }}</span> à ce groupe
+        </p>
+        <button type="button" class="debt-alert__link" (click)="navigateToBalances()" aria-label="Voir le détail des soldes">
+          Voir le détail →
+        </button>
+      </div>
+    </div>
+
+    <!-- Rangée de 3 actions -->
+    <div class="actions-row">
+      <ion-button class="action-btn action-btn--primary" (click)="navigateToAddExpense()" aria-label="Ajouter une dépense">
+        + Dépense
+      </ion-button>
+      <ion-button fill="outline" class="action-btn action-btn--secondary" (click)="navigateToBalances()" aria-label="Voir les soldes du groupe">
+        Voir soldes
+      </ion-button>
+      <ion-button fill="outline" class="action-btn action-btn--secondary" (click)="navigateToBalances()" aria-label="Rembourser une dette">
+        Rembourser
       </ion-button>
     </div>
 
-    <ion-spinner *ngIf="loadingExpenses" name="crescent" class="expenses-spinner" aria-label="Chargement des dépenses"></ion-spinner>
+    <!-- Dernières dépenses -->
+    <section class="section">
+      <h2 class="section-caption">Dernières dépenses</h2>
 
-    <ng-container *ngIf="!loadingExpenses">
-      <div *ngIf="expensesError" class="expenses-error" role="alert">
-        <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
-        Impossible de charger les dépenses.
+      <ion-spinner *ngIf="loadingExpenses" name="crescent" class="expenses-spinner" aria-label="Chargement des dépenses"></ion-spinner>
+
+      <ng-container *ngIf="!loadingExpenses">
+        <div *ngIf="expensesError" class="members-error" role="alert">
+          <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+          Impossible de charger les dépenses.
+        </div>
+
+        <ng-container *ngIf="!expensesError && expenses.length > 0">
+          <button
+            type="button"
+            class="row-card"
+            *ngFor="let e of visibleExpenses()"
+            (click)="navigateToExpense(e)"
+            [attr.aria-label]="e.description + ', ' + formatAmount(e.montant)"
+          >
+            <span class="avatar" aria-hidden="true">{{ initialOf(e.payeur.prenom) }}</span>
+            <span class="row-card__info">
+              <span class="row-card__title">{{ e.description }}</span>
+              <span class="row-card__meta">
+                Payé par {{ e.payeur.prenom }} · {{ e.date_depense | timeAgo }}
+              </span>
+            </span>
+            <span class="row-card__amount amount">{{ formatAmount(e.montant) }}</span>
+          </button>
+
+          <button
+            type="button"
+            *ngIf="!showAllExpenses && expenses.length > visibleExpenses().length"
+            class="see-all-link"
+            (click)="showAllExpenses = true"
+            aria-label="Voir tout l'historique des dépenses"
+          >
+            Voir tout l'historique →
+          </button>
+        </ng-container>
+
+        <div *ngIf="!expensesError && expenses.length === 0" class="empty-expenses" role="status">
+          <ion-icon name="receipt-outline" class="empty-icon" aria-hidden="true"></ion-icon>
+          <p class="empty-text">Aucune dépense pour l'instant.</p>
+          <ion-button
+            fill="outline"
+            (click)="navigateToAddExpense()"
+            aria-label="Ajouter la première dépense"
+            class="empty-add-btn"
+          >
+            Ajouter une dépense
+          </ion-button>
+        </div>
+      </ng-container>
+    </section>
+
+    <!-- Statistiques : tuiles cream -->
+    <section class="section" *ngIf="!loadingExpenses && !expensesError && expenses.length > 0">
+      <h2 class="section-caption">Statistiques</h2>
+      <div class="stats-tiles">
+        <div class="stats-tile">
+          <span class="stats-tile__label">Total</span>
+          <span class="stats-tile__value amount">{{ formatAmount(totalExpenses()) }}</span>
+        </div>
+        <div class="stats-tile" *ngIf="averagePerPerson() !== null">
+          <span class="stats-tile__label">Moy/pers</span>
+          <span class="stats-tile__value amount">{{ formatAmount(averagePerPerson()!) }}</span>
+        </div>
+        <div class="stats-tile">
+          <span class="stats-tile__label">Dépenses</span>
+          <span class="stats-tile__value amount">{{ expenses.length }}</span>
+        </div>
       </div>
-
-      <ion-list *ngIf="!expensesError && expenses.length > 0" class="expenses-list" aria-label="Liste des dépenses">
-        <ion-item
-          *ngFor="let e of expenses"
-          detail="true"
-          button="true"
-          (click)="navigateToExpense(e)"
-          class="expense-item"
-          [attr.aria-label]="e.description + ', ' + formatAmount(e.montant)"
-        >
-          <ion-label>
-            <h3 class="expense-item__desc">{{ e.description }}</h3>
-            <p class="expense-item__meta">
-              {{ e.payeur.prenom }} · {{ e.date_depense | date:'dd/MM/yyyy' }}
-            </p>
-          </ion-label>
-          <ion-note slot="end" class="expense-item__amount">
-            {{ formatAmount(e.montant) }}
-          </ion-note>
-        </ion-item>
-      </ion-list>
-
-      <div *ngIf="!expensesError && expenses.length === 0" class="empty-expenses" role="status">
-        <ion-icon name="receipt-outline" class="empty-icon" aria-hidden="true"></ion-icon>
-        <p class="empty-text">Aucune dépense pour l'instant.</p>
-        <ion-button
-          fill="outline"
-          (click)="navigateToAddExpense()"
-          aria-label="Ajouter la première dépense"
-          class="empty-add-btn"
-        >
-          Ajouter une dépense
-        </ion-button>
-      </div>
-    </ng-container>
+    </section>
 
     <!-- TODO: expose `role` in GET /api/groups/{id} response to restrict delete to creator -->
     <ion-button

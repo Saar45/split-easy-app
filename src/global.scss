@@ -31,3 +31,147 @@ h1, h2 {
 .amount {
   font-variant-numeric: tabular-nums lining-nums;
 }
+
+/* Couleurs de signe des montants (créances / dettes) */
+.positive {
+  color: var(--color-success);
+}
+
+.negative {
+  color: var(--color-error);
+}
+
+/* Avatar initiale : cercle sand par défaut, variantes décoratives pour les stacks */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sand);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.avatar--gold {
+  background: var(--brand-gold-400);
+}
+
+.avatar--sage {
+  background: var(--brand-sage-400);
+}
+
+.avatar--navy {
+  background: var(--brand-navy-500);
+  color: var(--surface-white);
+}
+
+/* Caption de section : majuscules + letter-spacing (maquettes §8) */
+.section-caption {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 var(--space-150) 0;
+}
+
+/* Carte-ligne réutilisable : avatar + infos + montant (maquettes §8.1, §8.3, §8.4) */
+.row-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-150);
+  width: 100%;
+  min-height: 64px;
+  padding: var(--space-150) var(--space-200);
+  margin-bottom: var(--space-100);
+  background: var(--surface-white);
+  border: none;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  text-align: left;
+}
+
+button.row-card {
+  cursor: pointer;
+}
+
+.row-card__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-050);
+  min-width: 0;
+}
+
+.row-card__title {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-card__meta {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-card__amount {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.row-card__amount.positive {
+  color: var(--color-success);
+}
+
+.row-card__amount.negative {
+  color: var(--color-error);
+}
+
+/* Breakpoints dossier §V.10 : marges 24px en desktop, contenu centré 1140px en XL */
+@media (min-width: 992px) {
+  ion-content.ion-padding {
+    --padding-start: var(--space-300);
+    --padding-end: var(--space-300);
+  }
+}
+
+@media (min-width: 1200px) {
+  ion-content.ion-padding {
+    --padding-start: max(var(--space-300), calc((100% - 1140px) / 2));
+    --padding-end: max(var(--space-300), calc((100% - 1140px) / 2));
+  }
+}
+
+/* Lien "voir tout" en pied de section */
+.see-all-link {
+  background: none;
+  border: none;
+  min-height: 44px;
+  padding: var(--space-100) 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-link);
+  cursor: pointer;
+}
+
+/* Espacement standard entre sections de page */
+.section {
+  margin-bottom: var(--space-300);
+}

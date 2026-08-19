@@ -23,3 +23,46 @@ ion-tab-bar {
     margin-top: -4px;
   }
 }
+
+// Rail latéral de navigation au-delà de 992px (dossier §V.10).
+// La tab bar existante est repositionnée en colonne à gauche,
+// labels visibles à côté des icônes (layout icon-start côté TS).
+@media (min-width: 992px) {
+  ion-tabs {
+    flex-direction: row;
+  }
+
+  ion-tab-bar {
+    order: -1;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--space-100);
+    width: 232px;
+    height: auto;
+    padding: var(--space-300) var(--space-150);
+    border-top: none;
+    border-right: 1px solid var(--surface-border);
+  }
+
+  ion-tab-button {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 48px;
+    border-radius: var(--radius-button);
+
+    ion-label {
+      font-size: 14px;
+    }
+  }
+
+  // Le [+] intégré au rail : plus de translation verticale.
+  .tab-button-primary {
+    ion-icon {
+      transform: none;
+    }
+
+    ion-label {
+      margin-top: 0;
+    }
+  }
+}

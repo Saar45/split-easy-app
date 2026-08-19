@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActionSheetController, ToastController } from '@ionic/angular';
 import { GroupService } from '../core/services/group.service';
@@ -12,7 +12,7 @@ import { take } from 'rxjs/operators';
   styleUrls: ['tabs.page.scss'],
   standalone: false,
 })
-export class TabsPage implements OnInit {
+export class TabsPage implements OnInit, OnDestroy {
   private readonly actionSheetCtrl = inject(ActionSheetController);
   private readonly toastCtrl = inject(ToastController);
   private readonly router = inject(Router);
@@ -20,8 +20,21 @@ export class TabsPage implements OnInit {
 
   private groups$!: Observable<Group[]>;
 
+  // Bascule tab bar mobile / rail latéral desktop (dossier §V.10, > 992px).
+  tabLayout: 'icon-top' | 'icon-start' = 'icon-top';
+  private readonly desktopQuery = window.matchMedia('(min-width: 992px)');
+  private readonly onDesktopChange = (): void => {
+    this.tabLayout = this.desktopQuery.matches ? 'icon-start' : 'icon-top';
+  };
+
   ngOnInit(): void {
     this.groups$ = this.groupService.list().pipe(shareReplay(1));
+    this.onDesktopChange();
+    this.desktopQuery.addEventListener('change', this.onDesktopChange);
+  }
+
+  ngOnDestroy(): void {
+    this.desktopQuery.removeEventListener('change', this.onDesktopChange);
   }
 
   openQuickAdd(event: Event): void {

@@ -1,3 +1,15 @@
+// En-tête sur fond cream (maquette §8.2)
+.header-cream {
+  --background: var(--surface-cream);
+  --color: var(--text-primary);
+}
+
+.cancel-btn {
+  --color: var(--color-error);
+  font-weight: 600;
+}
+
+// Zone OCR : fond sage clair décoratif, bordure pointillée
 .ocr-zone {
   display: flex;
   flex-direction: column;
@@ -6,7 +18,7 @@
   text-align: center;
   padding: var(--space-200);
   margin-bottom: var(--space-200);
-  background: var(--surface-cream);
+  background: var(--surface-sage-tint);
   border: 2px dashed var(--brand-sage-400);
   border-radius: var(--radius-card);
 }
@@ -14,6 +26,14 @@
 .ocr-icon {
   font-size: 28px;
   color: var(--brand-sage-700);
+}
+
+.ocr-title {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--brand-sage-700);
+  margin: 0;
 }
 
 .ocr-text {
@@ -26,10 +46,39 @@
   --border-radius: var(--radius-button);
   --border-color: var(--brand-sage-700);
   --color: var(--brand-sage-700);
+  min-height: 44px;
 }
 
 .ocr-file-input {
   display: none;
+}
+
+// Montant : point focal typographique (fond cream, bordure gold)
+.amount-focal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-200);
+  margin-bottom: var(--space-200);
+  background: var(--surface-cream);
+  border: 2px solid var(--brand-gold-400);
+  border-radius: var(--radius-card);
+
+  &__label {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-050);
+  }
+
+  &__input {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    max-width: 220px;
+  }
 }
 
 .form-item {
@@ -39,9 +88,18 @@
   --padding-end: var(--space-200);
   --padding-top: var(--space-150);
   --padding-bottom: var(--space-150);
-  box-shadow: var(--shadow-rest);
+  border: 1px solid var(--surface-border);
   border-radius: var(--radius-card);
   margin-bottom: var(--space-200);
+}
+
+.inline-fields {
+  display: flex;
+  gap: var(--space-150);
+
+  &__item {
+    flex: 1;
+  }
 }
 
 .form-label {
@@ -53,12 +111,6 @@
 
 .form-input {
   color: var(--text-primary);
-
-  &--amount {
-    font-variant-numeric: tabular-nums lining-nums;
-    font-size: 20px;
-    font-weight: 600;
-  }
 }
 
 .error-note {
@@ -66,7 +118,9 @@
   padding-top: var(--space-050);
 }
 
-.category-section {
+.category-section,
+.beneficiaires-section,
+.mode-section {
   margin-bottom: var(--space-200);
 }
 
@@ -74,7 +128,9 @@
   padding: 0 0 var(--space-100) 0;
 }
 
-.category-chips {
+.category-chips,
+.beneficiaires-chips,
+.mode-chips {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-100);
@@ -83,6 +139,7 @@
 .category-chip {
   --background: var(--surface-white);
   --color: var(--text-secondary);
+  min-height: 44px;
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-rest);
@@ -90,7 +147,7 @@
 
   &.chip--selected {
     --background: var(--brand-navy-800);
-    --color: #ffffff;
+    --color: var(--surface-white);
     border-color: var(--brand-navy-800);
   }
 
@@ -99,61 +156,38 @@
   }
 }
 
-.todo-note {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-100);
-  padding: var(--space-150) var(--space-200);
-  background: var(--surface-cream);
-  border-radius: var(--radius-card);
-  margin-bottom: var(--space-200);
-  font-size: 12px;
-  color: var(--text-secondary);
+// Chip de mode actif : navy + liseré gold (décoratif)
+.mode-chip {
+  --background: var(--surface-white);
+  --color: var(--text-secondary);
+  min-height: 44px;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
 
-  ion-icon {
-    flex-shrink: 0;
-    margin-top: 2px;
-    color: var(--color-info);
-  }
-}
-
-.submit-btn {
-  --border-radius: var(--radius-button);
-  margin-top: var(--space-200);
-}
-
-.mode-section {
-  margin-bottom: var(--space-200);
-
-  ion-segment {
-    margin-top: var(--space-100);
-    margin-bottom: var(--space-150);
+  &--active {
+    --background: var(--brand-navy-800);
+    --color: var(--surface-white);
+    border: 2px solid var(--brand-gold-400);
   }
 }
 
 .parts-list {
   display: flex;
   flex-direction: column;
+  margin-top: var(--space-150);
 }
 
-.beneficiaires-section {
-  margin: var(--space-200) 0;
+// CTA ancré en bas
+.footer-cta {
+  padding: var(--space-150) var(--space-200);
+  background: var(--surface-offwhite);
+  box-shadow: var(--shadow-sheet);
 }
 
-.beneficiaires-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-100);
-}
-
-.beneficiaire-chip {
-  --background: var(--surface-white);
-  --color: var(--text-primary);
-  border: 1px solid var(--surface-border);
-
-  &.chip--selected {
-    --background: var(--brand-navy-800);
-    --color: var(--surface-white);
-    border-color: var(--brand-navy-800);
-  }
+.submit-btn {
+  --border-radius: var(--radius-button);
+  --background: var(--brand-navy-800);
+  min-height: 48px;
+  margin: 0;
 }
