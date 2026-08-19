@@ -1,7 +1,14 @@
 .auth-wrap {
   max-width: 420px;
   margin: 0 auto;
-  padding-top: var(--space-300);
+  padding-top: var(--space-100);
+}
+
+.auth-logo {
+  display: block;
+  width: 120px;
+  height: auto;
+  margin: 0 auto var(--space-150);
 }
 
 .auth-title {
