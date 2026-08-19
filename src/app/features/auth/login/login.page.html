@@ -26,11 +26,23 @@
         <ion-input
           label="Mot de passe"
           labelPlacement="floating"
-          type="password"
+          [type]="showPassword ? 'text' : 'password'"
           autocomplete="current-password"
           formControlName="motDePasse"
           required
         ></ion-input>
+        <button
+          type="button"
+          slot="end"
+          class="password-toggle"
+          [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+          (click)="toggleShowPassword()"
+        >
+          <ion-icon
+            [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+            aria-hidden="true"
+          ></ion-icon>
+        </button>
       </ion-item>
 
       <ion-button

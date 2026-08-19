@@ -29,6 +29,25 @@
   margin-bottom: var(--space-200);
 }
 
+.password-toggle {
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 22px;
+    pointer-events: none;
+  }
+}
+
 .auth-hint {
   font-size: 13px;
   color: var(--text-secondary);

@@ -34,6 +34,11 @@ export class RegisterPage {
   });
 
   submitting = false;
+  showPassword = false;
+
+  toggleShowPassword(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   onSubmit(): void {
     if (this.form.invalid) {
