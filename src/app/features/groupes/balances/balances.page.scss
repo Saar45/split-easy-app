@@ -15,101 +15,183 @@
   color: var(--color-error);
 }
 
-.section {
+// Zone solde personnel : terracotta clair débiteur, vert clair créditeur
+.personal-balance {
+  padding: var(--space-200);
   margin-bottom: var(--space-300);
+  background: var(--surface-error-tint);
+  border: 2px solid var(--color-error);
+  border-radius: var(--radius-card);
+
+  &__caption {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 var(--space-100);
+  }
+
+  &__line {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-error);
+    margin: 0 0 var(--space-050);
+  }
+
+  &__sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  &--credit {
+    background: var(--surface-success-tint);
+    border-color: var(--color-success);
+
+    .personal-balance__line {
+      color: var(--color-success);
+    }
+  }
+
+  &--settled {
+    background: var(--surface-white);
+    border-color: var(--surface-border);
+
+    .personal-balance__line {
+      color: var(--text-primary);
+    }
+  }
 }
 
-.section-title {
-  font-family: var(--font-heading);
-  font-size: 18px;
-  color: var(--text-primary);
-  margin: 0 0 var(--space-100) 0;
-}
-
-.section-subtitle {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin: 0 0 var(--space-150) 0;
-}
-
-.solde-list,
-.reimb-list {
+.plain-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-100);
 }
 
-.solde-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-150) var(--space-200);
-  background: var(--surface-white);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-rest);
-
-  &.solde--credit .solde-amount {
-    color: var(--color-success);
-    font-weight: 600;
-  }
-
-  &.solde--debt .solde-amount {
-    color: var(--color-error);
-    font-weight: 600;
-  }
-}
-
-.solde-name {
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.solde-amount {
-  font-variant-numeric: tabular-nums lining-nums;
-}
-
-.reimb-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-100);
-  padding: var(--space-150) var(--space-200);
-  background: var(--surface-white);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-rest);
-}
-
-.reimb-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.reimb-action {
-  align-self: flex-start;
-}
-
-.reimb-line {
-  display: flex;
-  align-items: center;
-  gap: var(--space-100);
-  color: var(--text-primary);
-}
-
-.reimb-arrow {
-  color: var(--text-secondary);
-}
-
-.reimb-amount {
-  font-variant-numeric: tabular-nums lining-nums;
+// Badge "En attente" : fond sage décoratif, texte sage-700 accessible
+.pending-badge {
+  --background: var(--surface-sage-tint);
+  --color: var(--brand-sage-700);
+  border: 1px solid var(--brand-sage-400);
+  border-radius: var(--radius-badge);
   font-weight: 600;
-  color: var(--brand-navy-800);
+}
+
+.pay-btn {
+  --background: var(--brand-navy-800);
+  --border-radius: var(--radius-button);
+  min-height: 44px;
+  margin: 0;
+}
+
+// Carte plan optimisé : fond vert clair, comparaison avant/après
+.plan-card {
+  padding: var(--space-200);
+  background: var(--surface-success-tint);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-card);
+
+  &__caption {
+    color: var(--color-success);
+  }
+
+  &__title {
+    font-family: var(--font-heading);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-050);
+  }
+
+  &__text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-150);
+  }
+
+  &__compare {
+    display: flex;
+    align-items: center;
+    gap: var(--space-150);
+  }
+
+  &__box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-050);
+    padding: var(--space-150);
+    background: var(--surface-white);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-button);
+
+    &--after {
+      border-color: var(--color-success);
+    }
+  }
+
+  &__box-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__box-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  &__box--after &__box-value {
+    color: var(--color-success);
+  }
+
+  &__arrow {
+    font-size: 24px;
+    color: var(--color-success);
+    flex-shrink: 0;
+  }
+}
+
+// Derniers remboursements validés
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-100);
+  min-height: 48px;
+  padding: var(--space-100) var(--space-150);
+  margin-bottom: var(--space-100);
+  background: var(--surface-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+
+  &__check {
+    font-size: 20px;
+    color: var(--color-success);
+    flex-shrink: 0;
+  }
+
+  &__who {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  &__detail {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
 }
 
 .empty-block {
   padding: var(--space-200);
+  margin-bottom: var(--space-300);
   text-align: center;
   color: var(--text-secondary);
   background: var(--surface-cream);

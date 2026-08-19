@@ -20,51 +20,111 @@
   </div>
 
   <ng-container *ngIf="!loading && !hasError && data">
-    <section class="section">
-      <h2 class="section-title">Soldes par membre</h2>
-      <ul *ngIf="sortedSoldes().length > 0" class="solde-list">
-        <li *ngFor="let s of sortedSoldes()" class="solde-item"
-            [class.solde--credit]="isCreditor(s)"
-            [class.solde--debt]="isDebtor(s)">
-          <span class="solde-name">{{ fullName(s.user) }}</span>
-          <span class="solde-amount" [attr.aria-label]="'Solde ' + fullName(s.user)">
-            {{ formatAmount(s.balance) }}
-          </span>
-        </li>
-      </ul>
-      <div *ngIf="sortedSoldes().length === 0" class="empty-block">Aucun solde à afficher.</div>
+
+    <!-- Zone solde personnel (maquette §8.4) -->
+    <section
+      *ngIf="mySolde() !== null"
+      class="personal-balance"
+      [class.personal-balance--credit]="isMyCredit()"
+      [class.personal-balance--settled]="isSettled()"
+      aria-live="polite"
+    >
+      <p class="personal-balance__caption">Ton solde dans ce groupe</p>
+      <p class="personal-balance__line amount" *ngIf="isMyDebt()">
+        Tu dois {{ formatAbs(mySolde()!) }} au total
+      </p>
+      <p class="personal-balance__line amount" *ngIf="isMyCredit()">
+        On te doit {{ formatAbs(mySolde()!) }} au total
+      </p>
+      <p class="personal-balance__line" *ngIf="isSettled()">Tu es à jour</p>
+      <p class="personal-balance__sub" *ngIf="isMyDebt() && myDebts().length > 0">
+        {{ myDebts().length }} {{ myDebts().length > 1 ? 'personnes' : 'personne' }} à rembourser
+      </p>
+      <p class="personal-balance__sub" *ngIf="isMyCredit() && myCredits().length > 0">
+        {{ myCredits().length }} {{ myCredits().length > 1 ? 'personnes te doivent' : 'personne te doit' }}
+      </p>
     </section>
 
-    <section class="section">
-      <h2 class="section-title">Plan de remboursement optimisé</h2>
-      <p class="section-subtitle">Liste minimale pour solder les dettes (algorithme greedy).</p>
-
-      <ul *ngIf="remboursements().length > 0" class="reimb-list">
-        <li *ngFor="let r of remboursements()" class="reimb-item">
-          <div class="reimb-row">
-            <div class="reimb-line">
-              <span class="reimb-from">{{ fullName(r.from) }}</span>
-              <ion-icon name="arrow-forward" aria-hidden="true" class="reimb-arrow"></ion-icon>
-              <span class="reimb-to">{{ fullName(r.to) }}</span>
-            </div>
-            <span class="reimb-amount">{{ formatAbs(r.montant) }}</span>
-          </div>
+    <!-- Tes dettes -->
+    <section class="section" *ngIf="myDebts().length > 0">
+      <h2 class="section-caption">Tes dettes</h2>
+      <ul class="plain-list">
+        <li class="row-card" *ngFor="let r of myDebts()">
+          <span class="avatar" aria-hidden="true">{{ initialOf(r.to.prenom) }}</span>
+          <span class="row-card__info">
+            <span class="row-card__title">Tu dois à {{ r.to.prenom }}</span>
+            <span class="row-card__amount amount negative">{{ formatAbs(r.montant) }}</span>
+          </span>
+          <ion-badge *ngIf="hasPendingWith(currentUserId, r.to.id)" class="pending-badge">
+            En attente
+          </ion-badge>
           <ion-button
-            *ngIf="canPropose(r)"
+            *ngIf="!hasPendingWith(currentUserId, r.to.id)"
             size="small"
+            class="pay-btn"
             (click)="confirmPropose(r)"
-            aria-label="Proposer un remboursement"
-            class="reimb-action"
+            [attr.aria-label]="'Rembourser ' + formatAbs(r.montant) + ' à ' + fullName(r.to)"
           >
-            Proposer un remboursement
+            Rembourser
           </ion-button>
         </li>
       </ul>
+    </section>
 
-      <div *ngIf="remboursements().length === 0" class="empty-block success-block">
-        <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
-        Aucune dette à régler dans ce groupe.
+    <!-- On te doit -->
+    <section class="section" *ngIf="myCredits().length > 0">
+      <h2 class="section-caption">On te doit</h2>
+      <ul class="plain-list">
+        <li class="row-card" *ngFor="let r of myCredits()">
+          <span class="avatar" aria-hidden="true">{{ initialOf(r.from.prenom) }}</span>
+          <span class="row-card__info">
+            <span class="row-card__title">{{ r.from.prenom }} te doit</span>
+            <span class="row-card__amount amount positive">{{ formatAbs(r.montant) }}</span>
+          </span>
+          <ion-badge *ngIf="hasPendingWith(r.from.id, currentUserId)" class="pending-badge">
+            En attente
+          </ion-badge>
+        </li>
+      </ul>
+    </section>
+
+    <div *ngIf="remboursements().length === 0" class="empty-block success-block">
+      <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+      Aucune dette à régler dans ce groupe.
+    </div>
+
+    <!-- Plan optimisé : vitrine de l'algorithme greedy F5 -->
+    <section class="plan-card section" *ngIf="stats">
+      <h2 class="section-caption plan-card__caption">Plan optimisé</h2>
+      <p class="plan-card__title">Simplification des dettes</p>
+      <p class="plan-card__text" *ngIf="stats.reduced">L'algorithme a réduit les transactions :</p>
+      <p class="plan-card__text" *ngIf="!stats.reduced">Le plan est déjà minimal :</p>
+      <div class="plan-card__compare">
+        <div class="plan-card__box">
+          <span class="plan-card__box-label">Avant</span>
+          <span class="plan-card__box-value amount">{{ stats.before }} tx</span>
+        </div>
+        <ion-icon name="arrow-forward" class="plan-card__arrow" aria-hidden="true"></ion-icon>
+        <div class="plan-card__box plan-card__box--after">
+          <span class="plan-card__box-label">Après</span>
+          <span class="plan-card__box-value amount">{{ stats.after }} tx</span>
+        </div>
       </div>
     </section>
+
+    <!-- Derniers remboursements validés -->
+    <section class="section" *ngIf="lastValidated.length > 0">
+      <h2 class="section-caption">Derniers remboursements</h2>
+      <ul class="plain-list">
+        <li class="history-item" *ngFor="let r of lastValidated">
+          <ion-icon name="checkmark-circle" class="history-item__check" aria-hidden="true"></ion-icon>
+          <span class="history-item__who">{{ r.debiteur.prenom }} → {{ r.crediteur.prenom }}</span>
+          <span class="history-item__detail amount">
+            {{ formatAbs(r.montant) }} · {{ shortDate(r.date_validation) }}
+          </span>
+        </li>
+      </ul>
+    </section>
+
   </ng-container>
 </ion-content>

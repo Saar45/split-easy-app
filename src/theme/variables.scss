@@ -31,6 +31,16 @@
   --color-warning: #C27B1A;
   --color-info: #3B6D97;
 
+  // ----- Teintes sémantiques (fonds, maquettes §8.3 / §8.4) -----
+  --surface-error-tint: #FDF2F1;   // fond alertes de dette, zone solde personnel
+  --surface-success-tint: #F0F7F0; // fond carte plan optimisé
+  --surface-sage-tint: #F1F3EC;    // fond clair décoratif zone OCR
+
+  // ----- Variantes sur fond navy (carte solde, contraste AA >= 6.4:1) -----
+  --surface-navy-panel: #28395F;   // panneau interne carte solde
+  --color-success-ondark: #8FCE93; // créances sur navy
+  --color-error-ondark: #F0B0A6;   // dettes sur navy
+
   // ----- Typographie -----
   --font-heading: 'Lora', serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;

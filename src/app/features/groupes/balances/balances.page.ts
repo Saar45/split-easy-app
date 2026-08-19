@@ -6,7 +6,12 @@ import { firstValueFrom } from 'rxjs';
 import { BalanceService } from '../../../core/services/balance.service';
 import { RemboursementService } from '../../../core/services/remboursement.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { GroupBalances, Solde, RemboursementSuggestion } from '../../../core/models/balance.model';
+import { GroupBalances, RemboursementSuggestion, UserRef } from '../../../core/models/balance.model';
+import { Remboursement } from '../../../core/models/remboursement.model';
+import { computeSettlementStats, SettlementStats } from '../../../core/services/settlement-stats';
+
+const PENDING_STATUTS = ['en_attente', 'propose'];
+const MAX_HISTORY = 3;
 
 @Component({
   selector: 'app-balances',
@@ -29,13 +34,20 @@ export class BalancesPage implements OnInit {
   loading = true;
   hasError = false;
   data: GroupBalances | null = null;
-  private cachedSortedSoldes: Solde[] = [];
-  private cachedSortedSource: Solde[] | null = null;
+  // Comparaison avant/après du plan greedy (null = non calculable, carte masquée).
+  stats: SettlementStats | null = null;
+  lastValidated: Remboursement[] = [];
+  private pendingRemboursements: Remboursement[] = [];
 
   private readonly amountFormatter = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: 2,
+  });
+
+  private readonly shortDateFormatter = new Intl.DateTimeFormat('fr-FR', {
+    day: 'numeric',
+    month: 'short',
   });
 
   async ngOnInit(): Promise<void> {
@@ -58,11 +70,6 @@ export class BalancesPage implements OnInit {
     }
     this.currentUserId = u?.id ?? 0;
     this.load();
-  }
-
-  // Affiche la proposition uniquement quand le current user est le débiteur suggéré.
-  canPropose(r: RemboursementSuggestion): boolean {
-    return r.from.id === this.currentUserId;
   }
 
   async confirmPropose(r: RemboursementSuggestion): Promise<void> {
@@ -111,10 +118,11 @@ export class BalancesPage implements OnInit {
     this.loading = true;
     this.hasError = false;
     this.data = null;
-    this.cachedSortedSource = null;
+    this.stats = null;
     this.balanceService.getForGroup(this.groupId).subscribe({
       next: (b) => {
         this.data = b;
+        this.stats = computeSettlementStats(b);
         this.loading = false;
       },
       error: async () => {
@@ -129,14 +137,61 @@ export class BalancesPage implements OnInit {
         await t.present();
       },
     });
+    this.loadRemboursements();
   }
 
-  formatAmount(value: string): string {
-    const n = Number(value);
-    if (!Number.isFinite(n)) {
-      return value;
-    }
-    return this.amountFormatter.format(n);
+  // Historique + propositions en cours du groupe. Échec silencieux :
+  // badges et section masqués sans donnée fiable.
+  private loadRemboursements(): void {
+    this.remboursementService.list().subscribe({
+      next: (all) => {
+        const ofGroup = all.filter((r) => r.groupe_id === this.groupId);
+        this.pendingRemboursements = ofGroup.filter((r) => PENDING_STATUTS.includes(r.statut));
+        this.lastValidated = ofGroup
+          .filter((r) => r.statut === 'valide')
+          .sort((a, b) => (b.date_validation ?? '').localeCompare(a.date_validation ?? ''))
+          .slice(0, MAX_HISTORY);
+      },
+      error: () => {
+        this.pendingRemboursements = [];
+        this.lastValidated = [];
+      },
+    });
+  }
+
+  remboursements(): RemboursementSuggestion[] {
+    return this.data?.remboursements ?? [];
+  }
+
+  myDebts(): RemboursementSuggestion[] {
+    return this.remboursements().filter((r) => r.from.id === this.currentUserId);
+  }
+
+  myCredits(): RemboursementSuggestion[] {
+    return this.remboursements().filter((r) => r.to.id === this.currentUserId);
+  }
+
+  mySolde(): string | null {
+    const mine = this.data?.soldes.find((s) => s.user.id === this.currentUserId);
+    return mine?.balance ?? null;
+  }
+
+  isMyDebt(): boolean {
+    return Number(this.mySolde()) < 0;
+  }
+
+  isMyCredit(): boolean {
+    return Number(this.mySolde()) > 0;
+  }
+
+  isSettled(): boolean {
+    return this.mySolde() !== null && !this.isMyDebt() && !this.isMyCredit();
+  }
+
+  hasPendingWith(debiteurId: number, crediteurId: number): boolean {
+    return this.pendingRemboursements.some(
+      (r) => r.debiteur.id === debiteurId && r.crediteur.id === crediteurId,
+    );
   }
 
   formatAbs(value: string): string {
@@ -144,31 +199,20 @@ export class BalancesPage implements OnInit {
     return this.amountFormatter.format(Number.isFinite(n) ? n : 0);
   }
 
-  // Mémoïsation : ne re-trie que lorsque la référence du tableau soldes change.
-  sortedSoldes(): Solde[] {
-    if (!this.data) return [];
-    if (this.cachedSortedSource === this.data.soldes) {
-      return this.cachedSortedSoldes;
+  shortDate(value: string | null): string {
+    if (!value) {
+      return '';
     }
-    this.cachedSortedSource = this.data.soldes;
-    this.cachedSortedSoldes = [...this.data.soldes].sort((a, b) => Number(b.balance) - Number(a.balance));
-    return this.cachedSortedSoldes;
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? '' : this.shortDateFormatter.format(d);
   }
 
-  remboursements(): RemboursementSuggestion[] {
-    return this.data?.remboursements ?? [];
+  initialOf(name: string): string {
+    return name.trim().charAt(0).toUpperCase() || '?';
   }
 
-  fullName(u: { prenom: string; nom: string }): string {
+  fullName(u: UserRef): string {
     return `${u.prenom} ${u.nom}`.trim();
-  }
-
-  isCreditor(s: Solde): boolean {
-    return Number(s.balance) > 0;
-  }
-
-  isDebtor(s: Solde): boolean {
-    return Number(s.balance) < 0;
   }
 
   goBack(): void {

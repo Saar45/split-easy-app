@@ -7,6 +7,7 @@ import { GroupService } from '../../../core/services/group.service';
 import { ExpenseService } from '../../../core/services/expense.service';
 import { InvitationService } from '../../../core/services/invitation.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { BalanceService } from '../../../core/services/balance.service';
 import { Group } from '../../../core/models/group.model';
 import { Expense } from '../../../core/models/expense.model';
 import { GroupMember } from '../../../core/models/invitation.model';
@@ -24,6 +25,7 @@ export class DetailGroupPage implements OnInit {
   private readonly expenseService = inject(ExpenseService);
   private readonly invitationService = inject(InvitationService);
   private readonly authService = inject(AuthService);
+  private readonly balanceService = inject(BalanceService);
   private readonly alert = inject(AlertController);
   private readonly toast = inject(ToastController);
 
@@ -41,6 +43,12 @@ export class DetailGroupPage implements OnInit {
   inviteEmail = '';
   inviting = false;
   lastInviteToken: string | null = null;
+  showInvite = false;
+  showAllExpenses = false;
+  // null tant que le solde n'est pas chargé : l'alerte de dette reste masquée.
+  myBalance: string | null = null;
+
+  private static readonly AVATAR_VARIANTS = ['', 'avatar--gold', 'avatar--sage', 'avatar--navy'];
 
   private readonly amountFormatter = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -48,25 +56,27 @@ export class DetailGroupPage implements OnInit {
     minimumFractionDigits: 2,
   });
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isFinite(id) || !Number.isInteger(id) || id <= 0) {
       this.navigateBackWithToast('Identifiant de groupe invalide.');
       return;
     }
+    // Résolu avant le chargement : loadBalance dépend de currentUserId.
+    await this.resolveCurrentUserId();
     this.groupService.show(id).subscribe({
       next: (g) => {
         this.group = g;
         this.loading = false;
         this.loadExpenses(g.id);
         this.loadMembers(g.id);
+        this.loadBalance(g.id);
       },
       error: () => {
         this.loading = false;
         this.router.navigate(['/tabs/groupes']);
       },
     });
-    this.resolveCurrentUserId();
   }
 
   private async resolveCurrentUserId(): Promise<void> {
@@ -94,6 +104,55 @@ export class DetailGroupPage implements OnInit {
         this.membersError = true;
       },
     });
+  }
+
+  private loadBalance(groupId: number): void {
+    this.balanceService.getForGroup(groupId).subscribe({
+      next: (b) => {
+        const mine = b.soldes.find((s) => s.user.id === this.currentUserId);
+        this.myBalance = mine?.balance ?? null;
+      },
+      // Échec silencieux : sans donnée fiable, aucune alerte n'est affichée.
+      error: () => (this.myBalance = null),
+    });
+  }
+
+  isDebtor(): boolean {
+    return this.myBalance !== null && Number(this.myBalance) < 0;
+  }
+
+  toggleInvite(): void {
+    this.showInvite = !this.showInvite;
+  }
+
+  initialOf(name: string): string {
+    return name.trim().charAt(0).toUpperCase() || '?';
+  }
+
+  avatarVariant(index: number): string {
+    return DetailGroupPage.AVATAR_VARIANTS[index % DetailGroupPage.AVATAR_VARIANTS.length];
+  }
+
+  visibleExpenses(): Expense[] {
+    return this.showAllExpenses ? this.expenses : this.expenses.slice(0, 5);
+  }
+
+  totalExpenses(): number {
+    return this.expenses.reduce((sum, e) => sum + Number(e.montant), 0);
+  }
+
+  // null si les membres n'ont pas pu être chargés : la tuile n'est pas affichée.
+  averagePerPerson(): number | null {
+    const count = this.acceptedMembers().length;
+    if (count === 0) {
+      return null;
+    }
+    return this.totalExpenses() / count;
+  }
+
+  formatAbs(value: string): string {
+    const n = Math.abs(Number(value));
+    return this.amountFormatter.format(Number.isFinite(n) ? n : 0);
   }
 
   isCreator(): boolean {
