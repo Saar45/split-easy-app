@@ -1,5 +1,9 @@
 # split-easy-app
 
+<p align="center">
+  <img src="src/assets/logo/logo.png" width="200" alt="SplitEasy">
+</p>
+
 [![CI](https://github.com/Saar45/split-easy-app/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Saar45/split-easy-app/actions/workflows/ci.yml)
 
 SPA Angular 20 + Ionic 8 de l'application **Split-Easy** — gestion de dépenses partagées entre groupes.

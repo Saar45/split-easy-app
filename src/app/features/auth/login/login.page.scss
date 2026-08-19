@@ -1,7 +1,14 @@
 .auth-wrap {
   max-width: 420px;
   margin: 0 auto;
-  padding-top: var(--space-400);
+  padding-top: var(--space-300);
+}
+
+.auth-logo {
+  display: block;
+  width: 140px;
+  height: auto;
+  margin: 0 auto var(--space-200);
 }
 
 .auth-title {
@@ -20,6 +27,25 @@
   --background: var(--surface-white);
   --border-radius: var(--radius-button);
   margin-bottom: var(--space-200);
+}
+
+.password-toggle {
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 22px;
+    pointer-events: none;
+  }
 }
 
 .auth-submit {

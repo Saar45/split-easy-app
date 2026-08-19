@@ -5,6 +5,7 @@ import { ToastController } from '@ionic/angular';
 import { finalize, switchMap } from 'rxjs';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { computePasswordStrength, PasswordStrength } from '../../../core/services/password-strength';
 
 @Component({
   selector: 'app-register',
@@ -34,6 +35,16 @@ export class RegisterPage {
   });
 
   submitting = false;
+  showPassword = false;
+  readonly strengthSegments = [1, 2, 3, 4];
+
+  toggleShowPassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  get passwordStrength(): PasswordStrength {
+    return computePasswordStrength(this.form.controls['motDePasse'].value);
+  }
 
   onSubmit(): void {
     if (this.form.invalid) {
