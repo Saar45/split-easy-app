@@ -143,6 +143,21 @@ button.row-card {
   color: var(--color-error);
 }
 
+/* Breakpoints dossier §V.10 : marges 24px en desktop, contenu centré 1140px en XL */
+@media (min-width: 992px) {
+  ion-content.ion-padding {
+    --padding-start: var(--space-300);
+    --padding-end: var(--space-300);
+  }
+}
+
+@media (min-width: 1200px) {
+  ion-content.ion-padding {
+    --padding-start: max(var(--space-300), calc((100% - 1140px) / 2));
+    --padding-end: max(var(--space-300), calc((100% - 1140px) / 2));
+  }
+}
+
 /* Lien "voir tout" en pied de section */
 .see-all-link {
   background: none;
