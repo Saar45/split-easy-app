@@ -27,8 +27,46 @@ h1, h2 {
   font-weight: 700;
 }
 
-/* Montants financiers — alignement vertical des chiffres (brief §5.2) */
+/* Toolbar : fond blanc, titre Lora aligné à gauche (refonte visuelle) */
+ion-toolbar {
+  --background: var(--surface-white);
+  --color: var(--text-primary);
+  --border-color: var(--hairline-strong);
+  --padding-start: 18px;
+  --padding-end: 18px;
+  --min-height: 52px;
+}
+
+ion-title {
+  font-family: var(--font-heading) !important;
+  font-weight: 600 !important;
+  font-size: 17px !important;
+  text-align: start !important;
+  padding-inline-start: var(--space-100) !important;
+  padding-inline-end: var(--space-100) !important;
+}
+
+/* Marges d'écran standard (refonte visuelle) */
+ion-content.ion-padding {
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  --padding-start: 18px;
+  --padding-end: 18px;
+}
+
+/* Coquille de carte standard réutilisée par les écrans listes (refonte visuelle) */
+ion-card {
+  margin: 0;
+  background: var(--surface-white);
+  border: 1px solid #E8E3D6;
+  border-radius: var(--radius-card-lg);
+  box-shadow: 0 2px 6px hsla(30, 20%, 20%, 0.05);
+}
+
+/* Montants financiers — Lora 600, alignement vertical des chiffres (brief §5.2) */
 .amount {
+  font-family: var(--font-heading);
+  font-weight: 600;
   font-variant-numeric: tabular-nums lining-nums;
 }
 
@@ -41,7 +79,7 @@ h1, h2 {
   color: var(--color-error);
 }
 
-/* Avatar initiale : cercle sand par défaut, variantes décoratives pour les stacks */
+/* Avatar initiale : variantes navy-500 / gold-400 / sage-400 / navy-800 (AVATAR_VARIANTS) */
 .avatar {
   display: inline-flex;
   align-items: center;
@@ -50,35 +88,67 @@ h1, h2 {
   height: 36px;
   flex-shrink: 0;
   border-radius: var(--radius-pill);
-  background: var(--surface-sand);
-  color: var(--text-primary);
-  font-family: var(--font-body);
+  background: var(--brand-navy-500);
+  color: var(--surface-cream);
+  font-family: var(--font-heading);
   font-size: 15px;
   font-weight: 600;
 }
 
 .avatar--gold {
   background: var(--brand-gold-400);
+  color: var(--text-primary);
 }
 
 .avatar--sage {
   background: var(--brand-sage-400);
-}
-
-.avatar--navy {
-  background: var(--brand-navy-500);
   color: var(--surface-white);
 }
 
-/* Caption de section : majuscules + letter-spacing (maquettes §8) */
+.avatar--navy {
+  background: var(--brand-navy-800);
+  color: var(--surface-white);
+}
+
+/* Caption de section : majuscules + letter-spacing (refonte visuelle) */
 .section-caption {
   font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   margin: 0 0 var(--space-150) 0;
+}
+
+/* Badges de statut (refonte visuelle) */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-050);
+  padding: 3px var(--space-100);
+  border-radius: var(--radius-badge);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.badge--success {
+  background: var(--badge-success-bg);
+  color: var(--badge-success-fg);
+}
+
+.badge--warning {
+  background: var(--badge-warning-bg);
+  color: var(--badge-warning-fg);
+}
+
+.badge--neutral {
+  background: var(--badge-neutral-bg);
+  color: var(--badge-neutral-fg);
 }
 
 /* Carte-ligne réutilisable : avatar + infos + montant (maquettes §8.1, §8.3, §8.4) */
@@ -163,10 +233,10 @@ button.row-card {
   background: none;
   border: none;
   min-height: 44px;
-  padding: var(--space-100) 0;
+  padding: 11px 0 12px;
   font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 12.5px;
+  font-weight: 700;
   color: var(--text-link);
   cursor: pointer;
 }

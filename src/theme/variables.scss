@@ -67,6 +67,44 @@
   --shadow-sheet: 0 8px 24px hsla(30, 20%, 20%, 0.10);
   --shadow-modal: 0 16px 48px hsla(30, 20%, 20%, 0.12);
 
+  // ----- Hairlines (séparateurs internes de carte) -----
+  --hairline: #F4F0E4;
+  --hairline-strong: #EFEBDD;
+
+  // ----- Rayons ajoutés (cartes larges, tuiles d'icône) -----
+  --radius-card-lg: 16px;
+  --radius-hero: 20px;
+  --radius-tile: 12px;
+  --radius-frame: 26px;
+
+  // ----- Ombres de marque -----
+  --shadow-navy: 0 16px 36px rgba(30, 42, 74, 0.30);
+  --shadow-navy-sm: 0 6px 14px rgba(30, 42, 74, 0.24);
+  --shadow-gold: 0 8px 18px rgba(196, 184, 130, 0.38);
+
+  // ----- Dégradés -----
+  --gradient-navy: linear-gradient(157deg, #27375E 0%, #1E2A4A 52%, #15203A 100%);
+  --gradient-cream: linear-gradient(135deg, #F1EAD3, #E7DDBE);
+
+  // ----- Texture "papier de sécurité" (carte solde) -----
+  --texture-security: repeating-linear-gradient(
+    122deg, rgba(196, 184, 130, 0.05) 0 1px, transparent 1px 12px
+  );
+
+  // ----- Badges de statut -----
+  --badge-warning-bg: #FDF3E2;
+  --badge-warning-fg: #8F5A11;
+  --badge-success-bg: #F0F7F0;
+  --badge-success-fg: #2F6432;
+  --badge-neutral-bg: #F1EEE3;
+  --badge-neutral-fg: #8A8272;
+
+  // ----- Divers -----
+  --surface-warning-tint: #FDF8EA;
+  --border-warning-tint: #EEDFBB;
+  --surface-error-border: #EBC9C4;
+  --track: #F1EEE3;
+
   // ----- Surcharge Ionic -----
   --ion-font-family: var(--font-body);
   --ion-background-color: var(--surface-offwhite);
