@@ -17,11 +17,13 @@
 <ion-content class="ion-padding">
   <form [formGroup]="form" (ngSubmit)="submit()">
 
-    <!-- Zone OCR : fond sage décoratif, bordure pointillée (maquette §8.2) -->
+    <!-- Zone OCR : ligne horizontale, fond sage décoratif, bordure pointillée (maquette §07) -->
     <div class="ocr-zone">
-      <ion-icon name="camera-outline" class="ocr-icon" aria-hidden="true"></ion-icon>
-      <p class="ocr-title">Scanner un ticket</p>
-      <p class="ocr-text">L'analyse OCR.space préremplit le montant, la date et le commerçant.</p>
+      <span class="ocr-zone__icon" aria-hidden="true"><ion-icon name="camera-outline"></ion-icon></span>
+      <div class="ocr-zone__text">
+        <p class="ocr-title">Scanner un ticket</p>
+        <p class="ocr-text">L'analyse OCR préremplit le montant, la date et le commerçant.</p>
+      </div>
       <ion-button
         type="button"
         fill="outline"
@@ -31,8 +33,7 @@
         (click)="ticketInput.click()"
         aria-label="Scanner un ticket"
       >
-        <ion-icon slot="start" name="scan-outline" aria-hidden="true"></ion-icon>
-        {{ scanning ? 'Analyse en cours…' : 'Scanner un ticket' }}
+        {{ scanning ? 'Analyse…' : 'Scanner' }}
       </ion-button>
       <input
         #ticketInput
@@ -47,16 +48,19 @@
 
     <!-- Montant focal : fond cream + bordure gold -->
     <div class="amount-focal">
-      <label class="amount-focal__label" for="montant-input">Montant (€) <span aria-hidden="true">*</span></label>
-      <ion-input
-        id="montant-input"
-        formControlName="montant"
-        type="number"
-        inputmode="decimal"
-        placeholder="0,00"
-        aria-required="true"
-        class="amount-focal__input amount"
-      ></ion-input>
+      <label class="amount-focal__label" for="montant-input">Montant <span aria-hidden="true">*</span></label>
+      <div class="amount-focal__row">
+        <ion-input
+          id="montant-input"
+          formControlName="montant"
+          type="number"
+          inputmode="decimal"
+          placeholder="0,00"
+          aria-required="true"
+          class="amount-focal__input amount"
+        ></ion-input>
+        <span class="amount-focal__currency" aria-hidden="true">€</span>
+      </div>
       <ion-note *ngIf="hasError('montant','required')" color="danger" class="error-note" role="alert">
         Le montant est obligatoire.
       </ion-note>
@@ -96,7 +100,7 @@
           class="form-input"
         ></ion-input>
       </ion-item>
-      <ion-item class="form-item inline-fields__item" lines="none">
+      <ion-item class="form-item form-item--readonly inline-fields__item" lines="none">
         <ion-label position="stacked" class="form-label">Payé par</ion-label>
         <ion-input
           [value]="payerName"
@@ -118,7 +122,12 @@
           [attr.aria-label]="cat.libelle"
           class="category-chip"
         >
-          <ion-icon [name]="resolveCategoryIcon(cat.icone)" class="chip-icon" aria-hidden="true"></ion-icon>
+          <ion-icon
+            [name]="resolveCategoryIcon(cat.icone)"
+            class="chip-icon"
+            [style.color]="form.get('id_categorie')?.value === cat.id ? null : categoryColor(cat)"
+            aria-hidden="true"
+          ></ion-icon>
           <ion-label>{{ cat.libelle }}</ion-label>
         </ion-chip>
       </div>
@@ -136,8 +145,9 @@
           (click)="toggleBeneficiaire(m.id)"
           [attr.aria-pressed]="isBeneficiaire(m.id)"
           [attr.aria-label]="m.prenom + ' ' + m.nom"
-          class="category-chip"
+          class="category-chip beneficiaire-chip"
         >
+          <span class="beneficiaire-chip__avatar" aria-hidden="true">{{ initialOf(m.prenom) }}</span>
           <ion-label>{{ m.prenom }} {{ m.nom }}</ion-label>
         </ion-chip>
       </div>
@@ -153,13 +163,21 @@
         <ion-chip
           *ngFor="let m of modes"
           [class.mode-chip--active]="mode === m.value"
+          [class.mode-chip--percent]="m.value === 'pourcentage'"
           (click)="setMode(m.value)"
           [attr.aria-pressed]="mode === m.value"
           [attr.aria-label]="m.aria"
           class="mode-chip"
         >
+          <ion-icon *ngIf="mode === m.value" name="checkmark-circle" aria-hidden="true"></ion-icon>
           <ion-label>{{ m.label }}</ion-label>
         </ion-chip>
+      </div>
+
+      <div *ngIf="mode === 'equitable' && beneficiaireIds.length > 0" class="split-info">
+        <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+        {{ perPersonAmount() }} par personne, sur {{ beneficiaireIds.length }}
+        {{ beneficiaireIds.length > 1 ? 'bénéficiaires' : 'bénéficiaire' }}.
       </div>
 
       <div *ngIf="mode !== 'equitable'" class="parts-list">

@@ -1,15 +1,42 @@
 ion-tab-bar {
   --background: var(--surface-white);
-  --color: var(--text-secondary);
+  --color: var(--text-tertiary);
   --color-selected: var(--brand-navy-800);
   border-top: 1px solid var(--surface-border);
+  box-shadow: 0 -3px 12px hsla(30, 20%, 20%, 0.055);
   height: 72px;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding: 7px 4px 11px;
+  padding-bottom: calc(11px + env(safe-area-inset-bottom));
   overflow: visible;
 }
 
 ion-tab-button {
   overflow: visible;
+  position: relative;
+
+  ion-icon {
+    font-size: 21px;
+  }
+
+  ion-label {
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  // Indicateur actif : barre gold 20x2px en haut de l'onglet actif.
+  &.tab-selected::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--brand-gold-400);
+  }
 }
 
 // Bouton central [+] : surdimensionné, élévation supérieure (brief §4).
@@ -17,20 +44,26 @@ ion-tab-button {
   overflow: visible;
 
   ion-icon {
-    width: 32px;
-    height: 32px;
-    padding: var(--space-100);
+    width: 46px;
+    height: 46px;
+    padding: 0;
     background: var(--brand-navy-800);
-    color: var(--surface-white);
-    border-radius: var(--radius-pill);
-    box-shadow: var(--shadow-hover);
+    color: var(--brand-gold-400);
+    border-radius: var(--radius-tile);
+    box-shadow: 0 6px 16px rgba(30, 42, 74, 0.32);
     transform: translateY(-8px);
-    font-size: 28px;
+    font-size: 24px;
+    font-weight: 700;
     overflow: visible;
   }
 
   ion-label {
+    color: var(--brand-navy-800);
     margin-top: 0;
+  }
+
+  &.tab-selected::before {
+    display: none;
   }
 }
 

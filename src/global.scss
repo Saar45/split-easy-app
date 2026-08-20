@@ -63,6 +63,13 @@ ion-card {
   box-shadow: 0 2px 6px hsla(30, 20%, 20%, 0.05);
 }
 
+/* Action sheet (bouton [+] rapide de la tab bar) : titre navy, texte body */
+ion-action-sheet {
+  --background: var(--surface-white);
+  --color: var(--brand-navy-800);
+  --button-color: var(--text-primary);
+}
+
 /* Montants financiers — Lora 600, alignement vertical des chiffres (brief §5.2) */
 .amount {
   font-family: var(--font-heading);
