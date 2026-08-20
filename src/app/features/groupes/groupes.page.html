@@ -2,14 +2,14 @@
   <ion-toolbar>
     <ion-title>Groupes</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="goToCreate()" aria-label="Créer un groupe">
-        <ion-icon slot="icon-only" name="add"></ion-icon>
-      </ion-button>
+      <button type="button" class="add-tile-btn" (click)="goToCreate()" aria-label="Créer un groupe">
+        <ion-icon name="add" aria-hidden="true"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding groupes-content">
   <div *ngIf="loadError" class="error-state">
     <ion-icon name="cloud-offline-outline" class="error-state__icon" aria-hidden="true"></ion-icon>
     <p class="error-state__text">Impossible de charger les groupes.</p>
@@ -26,15 +26,38 @@
         (click)="goToDetail(group.id)"
         button
       >
-        <ion-card-header>
-          <ion-card-title class="group-card__title">{{ group.nom }}</ion-card-title>
-          <ion-card-subtitle *ngIf="group.description" class="group-card__desc">
-            {{ group.description }}
-          </ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <span class="group-card__statut">{{ group.statut }}</span>
-        </ion-card-content>
+        <div class="group-card__head">
+          <span class="group-card__icon" aria-hidden="true"><ion-icon name="people-outline"></ion-icon></span>
+          <div class="group-card__main">
+            <div class="group-card__title-row">
+              <span class="group-card__title">{{ group.nom }}</span>
+              <span class="badge" [ngClass]="statutBadgeClass(group.statut)">{{ titleCase(group.statut) }}</span>
+            </div>
+            <p *ngIf="group.description" class="group-card__desc">{{ group.description }}</p>
+          </div>
+        </div>
+
+        <div class="group-card__footer" *ngIf="overviewFor(group) as ov">
+          <div class="group-card__members" *ngIf="ov.membres !== null">
+            <div class="group-card__avatar-stack" aria-hidden="true">
+              <span
+                class="avatar group-card__avatar"
+                *ngFor="let m of ov.membres.slice(0, 4)"
+              >{{ initialOf(m.prenom) }}</span>
+            </div>
+            <span class="group-card__members-count">
+              {{ ov.membres.length }} {{ ov.membres.length > 1 ? 'membres' : 'membre' }}
+            </span>
+          </div>
+          <span
+            *ngIf="ov.soldePerso !== null"
+            class="group-card__solde amount"
+            [class.positive]="isPositive(ov.soldePerso)"
+            [class.negative]="isNegative(ov.soldePerso)"
+          >
+            {{ soldeLabel(ov.soldePerso) }}
+          </span>
+        </div>
       </ion-card>
     </ng-container>
 
@@ -52,7 +75,7 @@
   <ion-spinner *ngIf="loading" name="crescent" class="page-spinner" aria-label="Chargement"></ion-spinner>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="goToCreate()" aria-label="Créer un groupe">
+    <ion-fab-button class="group-fab" (click)="goToCreate()" aria-label="Créer un groupe">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

@@ -9,6 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { InvitationService } from '../../../core/services/invitation.service';
 import { CategoryService } from '../../../core/services/category.service';
 import { resolveCategoryIcon } from '../../../core/services/category-icon';
+import { resolveCategoryColor } from '../../../core/services/category-color';
 import { Categorie } from '../../../core/models/categorie.model';
 import { CreateExpensePayload, SplitMode } from '../../../core/models/expense.model';
 import { GroupMember } from '../../../core/models/invitation.model';
@@ -161,6 +162,27 @@ export class AddExpensePage implements OnInit {
     const member = this.availableMembers.find((m) => m.id === userId);
     return member ? `${member.prenom} ${member.nom}`.trim() : 'Membre';
   }
+
+  initialOf(name: string): string {
+    return name.trim().charAt(0).toUpperCase() || '?';
+  }
+
+  // Part par personne en mode équitable, affichée pour rendre le partage lisible (maquette §07).
+  perPersonAmount(): string {
+    const montant = Number(this.form.get('montant')?.value) || 0;
+    const n = this.beneficiaireIds.length || 1;
+    return this.amountFormatter.format(montant / n);
+  }
+
+  categoryColor(cat: Categorie): string {
+    return resolveCategoryColor(cat.libelle, cat.couleur);
+  }
+
+  private readonly amountFormatter = new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+  });
 
   private validateParts(montant: number): { ok: boolean; parts?: Record<string, string> } {
     if (this.mode === 'equitable') {

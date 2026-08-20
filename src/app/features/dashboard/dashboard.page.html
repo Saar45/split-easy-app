@@ -1,32 +1,4 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      <span class="wordmark">
-        <img class="wordmark-logo" src="assets/logo/logo-monogram.png" alt="" />
-        <span>Split·Easy</span>
-      </span>
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="goToNotifications()" aria-label="Voir les notifications" class="notif-bell">
-        <ion-icon name="notifications-outline" slot="icon-only" aria-hidden="true"></ion-icon>
-        <ion-badge
-          *ngIf="(unreadCount$ | async) as count"
-          [hidden]="count === 0"
-          color="danger"
-          class="notif-badge"
-          [attr.aria-label]="count + ' notification(s) non lue(s)'"
-        >
-          {{ count > 9 ? '9+' : count }}
-        </ion-badge>
-      </ion-button>
-      <ion-button (click)="goToProfil()" aria-label="Voir mon profil" class="avatar-btn">
-        <span class="avatar" aria-hidden="true">{{ initialOf(prenom) }}</span>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding">
+<ion-content class="ion-padding dashboard-content">
 
   <!-- Loading state -->
   <div *ngIf="loading" class="loading-wrapper" aria-live="polite" aria-label="Chargement en cours">
@@ -43,24 +15,79 @@
   <!-- Content -->
   <ng-container *ngIf="!loading && !error && summary">
 
-    <h1 class="greeting">Bonjour, {{ prenom }}</h1>
-
-    <!-- Carte solde global (maquette §8.1) -->
-    <section class="balance-card" aria-live="polite">
-      <p class="balance-card__label">Solde global</p>
-      <p class="balance-card__amount amount">{{ formatAmount(summary.solde_net) }}</p>
-      <div class="balance-card__panel">
-        <div class="balance-card__tile">
-          <span class="tile-label">On te doit</span>
-          <span class="tile-amount amount tile-amount--credit">{{ formatAmount(summary.total_a_recevoir) }}</span>
-        </div>
-        <div class="balance-card__divider" aria-hidden="true"></div>
-        <div class="balance-card__tile">
-          <span class="tile-label">Tu dois</span>
-          <span class="tile-amount amount tile-amount--debt">{{ formatAmount(summary.total_du) }}</span>
-        </div>
+    <!-- Bandeau salutation : nom + date + notifications + profil -->
+    <div class="greeting-row">
+      <div class="greeting-text">
+        <h1 class="greeting">Bonjour, {{ prenom }}</h1>
+        <p class="greeting-meta">
+          {{ todayLabel }} · {{ totalGroups }} {{ totalGroups > 1 ? 'groupes actifs' : 'groupe actif' }}
+        </p>
       </div>
+      <div class="greeting-actions">
+        <button
+          type="button"
+          class="icon-tile-btn"
+          (click)="goToNotifications()"
+          aria-label="Voir les notifications"
+        >
+          <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
+          <ion-badge
+            *ngIf="(unreadCount$ | async) as count"
+            [hidden]="count === 0"
+            class="notif-badge"
+            [attr.aria-label]="count + ' notification(s) non lue(s)'"
+          >
+            {{ count > 9 ? '9+' : count }}
+          </ion-badge>
+        </button>
+        <button type="button" class="avatar-btn" (click)="goToProfil()" aria-label="Voir mon profil">
+          <span class="avatar avatar--tile" aria-hidden="true">{{ initialOf(prenom) }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Carte solde net (maquette §8.1 / §03) -->
+    <section class="balance-card" aria-live="polite">
+      <div class="balance-card__texture" aria-hidden="true"></div>
+      <div class="balance-card__frame" aria-hidden="true"></div>
+      <div class="balance-card__top">
+        <span class="balance-card__label">Solde net</span>
+        <span class="balance-card__seal" aria-hidden="true">S</span>
+      </div>
+      <div class="balance-card__amount-row">
+        <span class="balance-card__amount amount">{{ formatSignedNumber(summary.solde_net) }}</span>
+        <span class="balance-card__currency">€</span>
+      </div>
+      <div class="balance-card__pill" [class.balance-card__pill--debt]="isNegative(summary.solde_net)">
+        <ion-icon
+          [name]="isNegative(summary.solde_net) ? 'arrow-down-outline' : 'arrow-up-outline'"
+          aria-hidden="true"
+        ></ion-icon>
+        {{ isNegative(summary.solde_net) ? 'À ta charge' : 'En ta faveur' }}
+      </div>
+      <div class="balance-card__divider" aria-hidden="true"></div>
+      <p class="balance-card__summary">
+        Réparti sur {{ totalGroups }} {{ totalGroups > 1 ? 'groupes actifs' : 'groupe actif' }}
+      </p>
     </section>
+
+    <!-- Cartes doubles : dettes / creances -->
+    <div class="stat-row">
+      <div class="stat-tile stat-tile--debt">
+        <div class="stat-tile__head">
+          <span class="stat-tile__icon"><ion-icon name="arrow-up-outline" aria-hidden="true"></ion-icon></span>
+          <span class="stat-tile__caption">Tu dois</span>
+        </div>
+        <p class="stat-tile__amount amount">{{ formatAmount(summary.total_du) }}</p>
+      </div>
+      <div class="stat-tile stat-tile--credit">
+        <div class="stat-tile__head">
+          <span class="stat-tile__icon"><ion-icon name="arrow-down-outline" aria-hidden="true"></ion-icon></span>
+          <span class="stat-tile__caption">On te doit</span>
+        </div>
+        <p class="stat-tile__amount amount">{{ formatAmount(summary.total_a_recevoir) }}</p>
+      </div>
+    </div>
 
     <!-- Actions rapides -->
     <div class="quick-actions">
@@ -79,39 +106,41 @@
       <h2 class="section-caption">Mes groupes</h2>
 
       <ng-container *ngIf="groupOverviews.length > 0; else noGroups">
-        <button
-          type="button"
-          class="row-card"
-          *ngFor="let g of groupOverviews"
-          (click)="goToGroup(g.group.id)"
-          [attr.aria-label]="'Ouvrir le groupe ' + g.group.nom"
-        >
-          <span class="avatar" aria-hidden="true">{{ initialOf(g.group.nom) }}</span>
-          <span class="row-card__info">
-            <span class="row-card__title">{{ g.group.nom }}</span>
-            <span class="row-card__meta" *ngIf="g.membres !== null">
-              {{ g.membres }} {{ g.membres > 1 ? 'membres' : 'membre' }}
-            </span>
-          </span>
-          <span
-            *ngIf="g.soldePerso !== null"
-            class="row-card__amount amount"
-            [class.positive]="isPositive(g.soldePerso)"
-            [class.negative]="isNegative(g.soldePerso)"
+        <div class="list-card">
+          <button
+            type="button"
+            class="list-row"
+            *ngFor="let g of groupOverviews"
+            (click)="goToGroup(g.group.id)"
+            [attr.aria-label]="'Ouvrir le groupe ' + g.group.nom"
           >
-            {{ formatAmount(g.soldePerso) }}
-          </span>
-        </button>
+            <span class="avatar list-row__avatar" aria-hidden="true">{{ initialOf(g.group.nom) }}</span>
+            <span class="list-row__info">
+              <span class="list-row__title">{{ g.group.nom }}</span>
+              <span class="list-row__meta" *ngIf="g.membres !== null">
+                {{ g.membres }} {{ g.membres > 1 ? 'membres' : 'membre' }}
+              </span>
+            </span>
+            <span
+              *ngIf="g.soldePerso !== null"
+              class="list-row__amount amount"
+              [class.positive]="isPositive(g.soldePerso)"
+              [class.negative]="isNegative(g.soldePerso)"
+            >
+              {{ formatAmount(g.soldePerso) }}
+            </span>
+          </button>
 
-        <button
-          type="button"
-          *ngIf="totalGroups > groupOverviews.length"
-          class="see-all-link"
-          (click)="goToGroupes()"
-          aria-label="Voir tous les groupes"
-        >
-          Voir tous les groupes →
-        </button>
+          <button
+            type="button"
+            *ngIf="totalGroups > groupOverviews.length"
+            class="see-all-link"
+            (click)="goToGroupes()"
+            aria-label="Voir tous les groupes"
+          >
+            Voir tous les groupes →
+          </button>
+        </div>
       </ng-container>
 
       <ng-template #noGroups>
@@ -119,61 +148,53 @@
       </ng-template>
     </section>
 
-    <!-- Activité récente -->
-    <section class="section">
-      <h2 class="section-caption">Activité récente</h2>
+    <!-- Dernières dépenses -->
+    <div class="list-card">
+      <div class="list-card__header">
+        <span class="list-card__title">Dernières dépenses</span>
+        <button type="button" class="list-card__link" (click)="goToGroupes()" aria-label="Voir toutes les dépenses">
+          Tout voir <ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
 
       <ng-container *ngIf="summary.dernieres_depenses.length > 0; else noExpenses">
         <button
           type="button"
-          class="row-card"
+          class="list-row"
           *ngFor="let depense of summary.dernieres_depenses.slice(0, 3)"
           (click)="goToExpense(depense.id)"
           [attr.aria-label]="depense.description + ', ' + formatAmount(depense.montant)"
         >
-          <span class="avatar" aria-hidden="true">{{ initialOf(depense.payeur.prenom) }}</span>
-          <span class="row-card__info">
-            <span class="row-card__title">
-              {{ depense.payeur.prenom }} a ajouté
-              <span class="amount">{{ formatAmount(depense.montant) }}</span>
-            </span>
-            <span class="row-card__meta">
-              {{ depense.description }} · {{ depense.date_depense | timeAgo }}
+          <span class="avatar list-row__avatar" aria-hidden="true">{{ initialOf(depense.payeur.prenom) }}</span>
+          <span class="list-row__info">
+            <span class="list-row__title">{{ depense.description }}</span>
+            <span class="list-row__meta">
+              {{ depense.payeur.prenom }} · {{ depense.date_depense | timeAgo }}
             </span>
           </span>
+          <span class="list-row__amount amount">{{ formatAmount(depense.montant) }}</span>
         </button>
       </ng-container>
 
       <ng-template #noExpenses>
-        <p class="empty-message">Aucune depense recente</p>
+        <p class="empty-message">Aucune dépense récente</p>
       </ng-template>
-    </section>
+    </div>
 
     <!-- Invitations en attente -->
-    <ion-card *ngIf="summary.invitations_en_attente > 0" class="summary-card invitation-card">
-      <ion-card-content class="invitation-content">
-        <div class="invitation-info">
-          <ion-icon name="mail-outline" aria-hidden="true" class="invitation-icon"></ion-icon>
-          <div>
-            <p class="invitation-title">Invitations en attente</p>
-            <p class="invitation-count">
-              <ion-badge color="primary" aria-label="{{ summary.invitations_en_attente }} invitation(s) en attente">
-                {{ summary.invitations_en_attente }}
-              </ion-badge>
-            </p>
-          </div>
-        </div>
-        <ion-button
-          fill="solid"
-          size="small"
-          class="invitation-btn"
-          (click)="goToInvitations()"
-          aria-label="Voir les invitations en attente"
-        >
-          Voir
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
+    <div class="invite-banner" *ngIf="summary.invitations_en_attente > 0">
+      <span class="invite-banner__icon" aria-hidden="true"><ion-icon name="mail-outline"></ion-icon></span>
+      <div class="invite-banner__info">
+        <p class="invite-banner__title">
+          {{ summary.invitations_en_attente }}
+          {{ summary.invitations_en_attente > 1 ? 'invitations en attente' : 'invitation en attente' }}
+        </p>
+        <p class="invite-banner__meta">Rejoins tes groupes en attente de réponse.</p>
+      </div>
+      <button type="button" class="invite-banner__btn" (click)="goToInvitations()" aria-label="Voir les invitations en attente">
+        Voir
+      </button>
+    </div>
 
   </ng-container>
 

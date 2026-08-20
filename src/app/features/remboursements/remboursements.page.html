@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-segment [value]="tab" (ionChange)="setTab($any($event).detail.value)" aria-label="Filtrer">
+  <ion-segment class="rb-segment" [value]="tab" (ionChange)="setTab($any($event).detail.value)" aria-label="Filtrer">
     <ion-segment-button value="en_cours">
       <ion-label>En cours</ion-label>
     </ion-segment-button>
@@ -38,25 +38,34 @@
           [class.rb--annule]="rb.statut === 'annule'">
         <div class="rb-header">
           <span class="rb-line">{{ fullName(rb.debiteur) }} <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon> {{ fullName(rb.crediteur) }}</span>
-          <span class="rb-amount">{{ formatAmount(rb.montant) }}</span>
+          <span class="rb-amount amount">{{ formatAmount(rb.montant) }}</span>
         </div>
         <div class="rb-meta">
-          <span class="rb-statut">{{ statutLabel(rb.statut) }}</span>
-          <span class="rb-date">{{ rb.date_creation | date:'dd/MM/yyyy' }}</span>
+          <span class="badge" [ngClass]="{
+            'badge--warning': rb.statut === 'propose' || rb.statut === 'en_attente',
+            'badge--success': rb.statut === 'valide',
+            'badge--neutral': rb.statut === 'conteste' || rb.statut === 'annule'
+          }">{{ statutLabel(rb.statut) }}</span>
+          <span class="rb-date">{{ groupName(rb) ? groupName(rb) + ' · ' : '' }}{{ rb.date_creation | date:'dd/MM/yyyy' }}</span>
         </div>
 
         <div *ngIf="rb.statut === 'propose'" class="rb-actions">
-          <ion-button *ngIf="isCreditor(rb)" size="small" color="success" (click)="confirmAccept(rb)" aria-label="Accepter">
-            Accepter
-          </ion-button>
-          <ion-button *ngIf="isCreditor(rb)" size="small" color="danger" fill="outline" (click)="confirmReject(rb)" aria-label="Refuser">
+          <button *ngIf="isCreditor(rb)" type="button" class="rb-btn rb-btn--accept" (click)="confirmAccept(rb)" aria-label="Accepter">
+            <ion-icon name="checkmark" aria-hidden="true"></ion-icon> Accepter
+          </button>
+          <button *ngIf="isCreditor(rb)" type="button" class="rb-btn rb-btn--reject" (click)="confirmReject(rb)" aria-label="Refuser">
             Refuser
-          </ion-button>
-          <ion-button *ngIf="isDebtor(rb)" size="small" fill="outline" (click)="confirmCancel(rb)" aria-label="Annuler">
-            Annuler
-          </ion-button>
+          </button>
+          <button *ngIf="isDebtor(rb)" type="button" class="rb-btn rb-btn--cancel" (click)="confirmCancel(rb)" aria-label="Annuler ma proposition">
+            Annuler ma proposition
+          </button>
         </div>
       </li>
     </ul>
+
+    <p class="rb-note">
+      <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+      Un remboursement n'est comptabilisé qu'après validation du créditeur.
+    </p>
   </ng-container>
 </ion-content>

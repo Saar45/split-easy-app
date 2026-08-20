@@ -59,6 +59,27 @@ export class NotificationsPage implements OnInit {
     }
   }
 
+  // Teinte de la tuile d'icône par type (README §11) : classe utilitaire locale.
+  colorFor(type: NotificationType): string {
+    switch (type) {
+      case 'invitation_recue':
+      case 'invitation_acceptee':
+      case 'invitation_refusee':
+        return 'notif-icon--navy';
+      case 'depense_ajoutee':
+        return 'notif-icon--warning';
+      case 'remboursement_propose':
+        return 'notif-icon--navy';
+      case 'remboursement_accepte':
+        return 'notif-icon--success';
+      case 'remboursement_rejete':
+      case 'remboursement_annule':
+        return 'notif-icon--error';
+      default:
+        return 'notif-icon--sage';
+    }
+  }
+
   relativeDate(iso: string): string {
     const date = new Date(iso);
     const diffMs = Date.now() - date.getTime();

@@ -1,39 +1,36 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Connexion</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding">
+<ion-content class="ion-padding auth-content" [fullscreen]="true">
   <div class="auth-wrap">
-    <img class="auth-logo" src="assets/logo/logo.svg" alt="SplitEasy" />
+    <div class="auth-logo-tile">
+      <img class="auth-logo" src="assets/logo/logo-monogram.png" alt="" />
+    </div>
     <h1 class="auth-title">Split-Easy</h1>
     <p class="auth-subtitle">Gérez vos dépenses partagées.</p>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
-      <ion-item>
+      <div class="field-card">
+        <label class="field-card__label" for="login-email">Email</label>
         <ion-input
-          label="Email"
-          labelPlacement="floating"
+          id="login-email"
           type="email"
           autocomplete="email"
           formControlName="email"
           required
+          class="field-card__input"
         ></ion-input>
-      </ion-item>
+      </div>
 
-      <ion-item>
+      <div class="field-card field-card--password">
+        <label class="field-card__label" for="login-password">Mot de passe</label>
         <ion-input
-          label="Mot de passe"
-          labelPlacement="floating"
+          id="login-password"
           [type]="showPassword ? 'text' : 'password'"
           autocomplete="current-password"
           formControlName="motDePasse"
           required
+          class="field-card__input"
         ></ion-input>
         <button
           type="button"
-          slot="end"
           class="password-toggle"
           [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
           (click)="toggleShowPassword()"
@@ -43,7 +40,7 @@
             aria-hidden="true"
           ></ion-icon>
         </button>
-      </ion-item>
+      </div>
 
       <ion-button
         type="submit"
@@ -55,9 +52,16 @@
       </ion-button>
     </form>
 
+    <div class="auth-divider"><span>ou</span></div>
+
     <p class="auth-alt">
       Pas encore de compte ?
       <a routerLink="/auth/register">S'inscrire</a>
     </p>
   </div>
 </ion-content>
+
+<ion-footer class="auth-footer">
+  <ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon>
+  Connexion chiffrée · conforme RGPD
+</ion-footer>

@@ -4,6 +4,7 @@ import { AlertController, ToastController } from '@ionic/angular';
 
 import { AuthService } from '../../core/services/auth.service';
 import { ProfileService } from '../../core/services/profile.service';
+import { GroupService } from '../../core/services/group.service';
 import { UserPreferences } from '../../core/models/preferences.model';
 
 @Component({
@@ -15,6 +16,7 @@ import { UserPreferences } from '../../core/models/preferences.model';
 export class ProfilPage implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly profileService = inject(ProfileService);
+  private readonly groupService = inject(GroupService);
   private readonly toastCtrl = inject(ToastController);
   private readonly alertCtrl = inject(AlertController);
   private readonly router = inject(Router);
@@ -25,13 +27,25 @@ export class ProfilPage implements OnInit {
   loading = true;
   exporting = false;
   deleting = false;
+  // null tant que non chargé : le pill "Membre de N groupes" reste masqué plutôt que d'afficher 0.
+  groupCount: number | null = null;
 
   ngOnInit(): void {
     this.loadPreferences();
+    this.loadGroupCount();
   }
 
   ionViewWillEnter(): void {
     this.loadPreferences();
+  }
+
+  // Décision d'implémentation §2a du restyle : GroupService.list() est trivial et déjà utilisé
+  // partout ailleurs. Échec silencieux : le pill reste masqué plutôt que d'inventer un nombre.
+  private loadGroupCount(): void {
+    this.groupService.list().subscribe({
+      next: (groups) => (this.groupCount = groups.length),
+      error: () => (this.groupCount = null),
+    });
   }
 
   private loadPreferences(): void {

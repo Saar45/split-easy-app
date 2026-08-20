@@ -27,105 +27,294 @@
   }
 }
 
-// Header : wordmark + avatar
-.wordmark {
-  font-family: var(--font-heading);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--brand-navy-800);
-  display: flex;
-  align-items: center;
-  gap: var(--space-100);
+.dashboard-content {
+  --padding-top: 18px;
+  --padding-bottom: 14px;
+  --padding-start: 18px;
+  --padding-end: 18px;
 }
 
-.wordmark-logo {
-  width: 28px;
-  height: 28px;
+// Bandeau salutation
+.greeting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-150);
+  margin-bottom: 13px;
+}
+
+.greeting {
+  font-family: var(--font-heading);
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--brand-navy-800);
+  margin: 0;
+}
+
+.greeting-meta {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  margin: 3px 0 0;
+}
+
+.greeting-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   flex-shrink: 0;
 }
 
-.avatar-btn {
-  --padding-start: var(--space-050);
-  --padding-end: var(--space-050);
+.icon-tile-btn {
+  position: relative;
+  width: 39px;
+  height: 39px;
   min-width: 44px;
   min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-white);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-tile);
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 19px;
+    color: var(--brand-navy-800);
+  }
 }
 
-// Greeting
-.greeting {
-  font-family: var(--font-heading);
-  font-size: 24px;
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--color-error);
+  color: var(--surface-white);
+  font-size: 10px;
   font-weight: 700;
-  color: var(--brand-navy-800);
-  margin-bottom: var(--space-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--surface-offwhite);
 }
 
-// Carte solde global : fond navy, rayon signature
+.avatar-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.avatar--tile {
+  width: 39px;
+  height: 39px;
+  border-radius: var(--radius-tile);
+  font-size: 17px;
+}
+
+// Carte solde net
 .balance-card {
-  background: var(--brand-navy-800);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-rest);
-  padding: var(--space-300) var(--space-200) var(--space-200);
-  margin-bottom: var(--space-200);
-  text-align: center;
+  position: relative;
+  flex: 0 0 auto;
+  overflow: hidden;
+  background: var(--gradient-navy);
+  border-radius: var(--radius-hero);
+  box-shadow: var(--shadow-navy);
+  padding: 21px 21px 19px;
+  margin-bottom: 13px;
+
+  &__texture {
+    position: absolute;
+    inset: 0;
+    background-image: var(--texture-security);
+  }
+
+  &__frame {
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(196, 184, 130, 0.24);
+    border-radius: 14px;
+  }
+
+  &__top {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
 
   &__label {
     font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--surface-offwhite);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin: 0 0 var(--space-100) 0;
+    color: var(--brand-gold-400);
+  }
+
+  &__seal {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(196, 184, 130, 0.5);
+    background: rgba(196, 184, 130, 0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 17px;
+    color: var(--brand-gold-400);
+  }
+
+  &__amount-row {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    margin-top: 12px;
   }
 
   &__amount {
-    font-family: var(--font-body);
-    font-size: 34px;
-    font-weight: 700;
-    color: var(--surface-white);
-    margin: 0 0 var(--space-200) 0;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 48px;
+    line-height: 1;
+    color: #F3EEDD;
+    letter-spacing: -1px;
   }
 
-  &__panel {
-    display: flex;
+  &__currency {
+    font-family: var(--font-heading);
+    font-size: 24px;
+    color: var(--brand-gold-400);
+  }
+
+  &__pill {
+    position: relative;
+    display: inline-flex;
     align-items: center;
-    background: var(--surface-navy-panel);
-    border-radius: var(--radius-button);
-    padding: var(--space-150) var(--space-100);
-  }
+    gap: 6px;
+    margin-top: 12px;
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(196, 184, 130, 0.14);
+    border: 1px solid rgba(196, 184, 130, 0.36);
+    color: #E2D6A4;
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    font-weight: 600;
 
-  &__tile {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-050);
+    ion-icon {
+      font-size: 12px;
+    }
+
+    &--debt {
+      color: var(--color-error-ondark);
+      background: rgba(240, 176, 166, 0.10);
+      border-color: rgba(240, 176, 166, 0.30);
+    }
   }
 
   &__divider {
-    width: 1px;
-    height: 36px;
-    background: var(--brand-navy-800);
+    position: relative;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 16px 0 11px;
+  }
+
+  &__summary {
+    position: relative;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: rgba(243, 238, 221, 0.62);
+    margin: 0;
   }
 }
 
-.tile-label {
-  font-family: var(--font-body);
-  font-size: 12px;
-  color: var(--surface-offwhite);
+// Cartes doubles dettes / creances
+.stat-row {
+  display: flex;
+  gap: 11px;
+  margin-bottom: 13px;
 }
 
-.tile-amount {
-  font-family: var(--font-body);
-  font-size: 16px;
-  font-weight: 600;
+.stat-tile {
+  flex: 1;
+  background: var(--surface-white);
+  border: 1px solid #E8E3D6;
+  border-radius: 14px;
+  padding: 13px 14px;
+  box-shadow: 0 2px 4px hsla(30, 20%, 20%, 0.05);
 
-  &--credit {
-    color: var(--color-success-ondark);
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+
+  &__icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    ion-icon {
+      font-size: 14px;
+    }
+  }
+
+  &__caption {
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  &__amount {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
   }
 
   &--debt {
-    color: var(--color-error-ondark);
+    .stat-tile__icon {
+      background: rgba(196, 75, 63, 0.10);
+      color: var(--color-error);
+    }
+
+    .stat-tile__amount {
+      color: var(--color-error);
+    }
+  }
+
+  &--credit {
+    .stat-tile__icon {
+      background: rgba(59, 122, 62, 0.11);
+      color: var(--color-success);
+    }
+
+    .stat-tile__amount {
+      color: var(--color-success);
+    }
   }
 }
 
@@ -133,7 +322,7 @@
 .quick-actions {
   display: flex;
   gap: var(--space-150);
-  margin-bottom: var(--space-300);
+  margin-bottom: 13px;
 }
 
 .quick-btn {
@@ -148,6 +337,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  border: none;
 
   ion-icon {
     font-size: 18px;
@@ -155,7 +345,6 @@
 
   &--gold {
     background: var(--brand-gold-400);
-    border: none;
     color: var(--brand-navy-800);
     box-shadow: var(--shadow-rest);
   }
@@ -167,77 +356,178 @@
   }
 }
 
-// Sections : caption majuscules
-// Empty state
+// Section : caption + carte-liste
+.section {
+  margin-bottom: 13px;
+}
+
 .empty-message {
   font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-size: 12.5px;
+  color: var(--text-tertiary);
   text-align: center;
   padding: var(--space-200) 0;
   margin: 0;
 }
 
-// Invitation card
-.summary-card {
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-rest);
+// Carte-liste réutilisée (groupes, dernières dépenses)
+.list-card {
   background: var(--surface-white);
-  margin-bottom: var(--space-200);
-}
+  border: 1px solid #E8E3D6;
+  border-radius: var(--radius-card-lg);
+  box-shadow: 0 2px 6px hsla(30, 20%, 20%, 0.05);
+  padding: 0 15px;
+  margin-bottom: 13px;
 
-.invitation-card {
-  border-left: 4px solid var(--brand-navy-800);
-}
-
-.invitation-content {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-200);
-
-  .invitation-info {
+  &__header {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: var(--space-150);
+    justify-content: space-between;
+    padding: 14px 0 11px;
+    border-bottom: 1px solid var(--hairline-strong);
   }
 
-  .invitation-icon {
-    font-size: 28px;
+  &__title {
+    font-family: var(--font-heading);
+    font-size: 15.5px;
+    font-weight: 600;
     color: var(--brand-navy-800);
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    padding: 8px 0;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-link);
+    cursor: pointer;
+
+    ion-icon {
+      font-size: 13px;
+    }
+  }
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--hairline);
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-tile);
     flex-shrink: 0;
   }
 
-  .invitation-title {
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__title {
     font-family: var(--font-body);
     font-size: 14px;
     font-weight: 600;
     color: var(--text-primary);
-    margin: 0 0 var(--space-050) 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .invitation-count {
-    margin: 0;
+  &__meta {
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    color: var(--text-tertiary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .invitation-btn {
-    --background: var(--brand-navy-800);
-    --border-radius: var(--radius-button);
+  &__amount {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-secondary);
     flex-shrink: 0;
   }
 }
 
-.notif-bell {
-  position: relative;
-}
+// Bandeau invitations
+.invite-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--gradient-cream);
+  border: 1px solid #E0D5B2;
+  border-radius: 14px;
+  padding: 14px;
 
-.notif-badge {
-  position: absolute;
-  top: 4px;
-  right: 2px;
-  font-size: 0.65rem;
-  padding: 2px 5px;
-  border-radius: 999px;
+  &__icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    background: var(--brand-navy-800);
+    color: var(--brand-gold-400);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-family: var(--font-heading);
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  &__meta {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 2px 0 0;
+  }
+
+  &__btn {
+    height: 37px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 10px;
+    background: var(--brand-navy-800);
+    color: var(--surface-white);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
 }

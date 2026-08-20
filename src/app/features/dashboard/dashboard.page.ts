@@ -51,6 +51,20 @@ export class DashboardPage implements OnInit, OnDestroy {
     maximumFractionDigits: 2,
   });
 
+  private readonly plainFormatter = new Intl.NumberFormat('fr-FR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  private readonly dateFormatter = new Intl.DateTimeFormat('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+
+  // Date du jour affichee dans le bandeau d'accueil (maquette §03).
+  readonly todayLabel = this.capitalize(this.dateFormatter.format(new Date()));
+
   async ngOnInit(): Promise<void> {
     await this.resolveUser();
     this.loadDashboard();
@@ -89,6 +103,20 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   initialOf(name: string): string {
     return name.trim().charAt(0).toUpperCase() || '?';
+  }
+
+  // Montant signe, sans symbole monetaire : utilise par la carte solde net (maquette §03).
+  formatSignedNumber(s: string): string {
+    const value = parseFloat(s);
+    if (isNaN(value)) {
+      return this.plainFormatter.format(0);
+    }
+    const sign = value >= 0 ? '+' : '-';
+    return sign + this.plainFormatter.format(Math.abs(value));
+  }
+
+  private capitalize(s: string): string {
+    return s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1);
   }
 
   quickAddExpense(): void {

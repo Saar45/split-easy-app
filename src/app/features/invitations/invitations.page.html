@@ -1,6 +1,12 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/accueil" text=""></ion-back-button>
+    </ion-buttons>
     <ion-title>Invitations</ion-title>
+    <ion-buttons slot="end" *ngIf="list.length > 0">
+      <span class="pending-pill">{{ list.length }}</span>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -17,43 +23,44 @@
       <ion-icon name="mail-open-outline" class="empty-icon" aria-hidden="true"></ion-icon>
       <p class="empty-text">Aucune invitation en attente.</p>
     </div>
+    <div *ngIf="list.length === 0" class="invitations-note">
+      Les invitations expirées disparaissent automatiquement au bout de 7 jours.
+    </div>
 
-    <ion-list *ngIf="list.length > 0" class="invitations-list" aria-label="Invitations en attente">
+    <div class="invitations-list" *ngIf="list.length > 0" aria-label="Invitations en attente">
       <ion-card
         *ngFor="let inv of list"
         class="invitation-card"
         [attr.aria-label]="'Invitation à rejoindre ' + inv.groupe.nom"
       >
-        <ion-card-header>
-          <ion-card-title class="invitation-card__title">{{ inv.groupe.nom }}</ion-card-title>
-          <ion-card-subtitle class="invitation-card__meta">
-            Invitation reçue le {{ inv.date_invitation | date:'dd/MM/yyyy' }}
-          </ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <p class="invitation-card__expires" *ngIf="inv.date_expiration">
-            Expire le {{ inv.date_expiration | date:'dd/MM/yyyy' }}
-          </p>
-          <div class="invitation-card__actions">
-            <ion-button
-              fill="solid"
-              color="success"
-              (click)="confirmAccept(inv)"
-              aria-label="Accepter l'invitation"
-            >
-              Rejoindre
-            </ion-button>
-            <ion-button
-              fill="outline"
-              color="medium"
-              (click)="confirmRefuse(inv)"
-              aria-label="Refuser l'invitation"
-            >
-              Refuser
-            </ion-button>
+        <div class="invitation-card__head">
+          <span class="invitation-card__icon" aria-hidden="true"><ion-icon name="people-outline"></ion-icon></span>
+          <div class="invitation-card__info">
+            <p class="invitation-card__title">{{ inv.groupe.nom }}</p>
+            <p class="invitation-card__meta">
+              Invitation reçue le {{ inv.date_invitation | date:'dd/MM/yyyy' }}
+            </p>
           </div>
-        </ion-card-content>
+        </div>
+
+        <div class="invitation-card__expiry" *ngIf="inv.date_expiration">
+          <ion-icon name="hourglass-outline" aria-hidden="true"></ion-icon>
+          Expire le {{ inv.date_expiration | date:'dd/MM/yyyy' }}
+        </div>
+
+        <div class="invitation-card__actions">
+          <button type="button" class="invite-btn invite-btn--accept" (click)="confirmAccept(inv)" aria-label="Accepter l'invitation">
+            Rejoindre
+          </button>
+          <button type="button" class="invite-btn invite-btn--refuse" (click)="confirmRefuse(inv)" aria-label="Refuser l'invitation">
+            Refuser
+          </button>
+        </div>
       </ion-card>
-    </ion-list>
+    </div>
+
+    <div class="invitations-note" *ngIf="list.length > 0">
+      Les invitations expirées disparaissent automatiquement au bout de 7 jours.
+    </div>
   </ng-container>
 </ion-content>

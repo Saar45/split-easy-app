@@ -1,50 +1,60 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/auth/login"></ion-back-button>
+      <ion-back-button defaultHref="/auth/login" text=""></ion-back-button>
     </ion-buttons>
     <ion-title>Créer un compte</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding auth-content">
   <div class="auth-wrap">
-    <img class="auth-logo" src="assets/logo/logo.svg" alt="SplitEasy" />
-    <h1 class="auth-title">Rejoindre Split-Easy</h1>
-    <p class="auth-subtitle">Crée ton compte pour partager des dépenses avec ton groupe.</p>
+    <div class="auth-heading">
+      <div class="auth-logo-tile">
+        <img class="auth-logo" src="assets/logo/logo-monogram.png" alt="" />
+      </div>
+      <div>
+        <h1 class="auth-title">Rejoindre Split-Easy</h1>
+        <p class="auth-subtitle">Crée ton compte pour partager des dépenses avec ton groupe.</p>
+      </div>
+    </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
-      <ion-item>
-        <ion-input label="Prénom" labelPlacement="floating" formControlName="prenom" required></ion-input>
-      </ion-item>
+      <div class="inline-fields">
+        <div class="field-card inline-fields__item">
+          <label class="field-card__label" for="reg-prenom">Prénom</label>
+          <ion-input id="reg-prenom" formControlName="prenom" required class="field-card__input"></ion-input>
+        </div>
+        <div class="field-card inline-fields__item">
+          <label class="field-card__label" for="reg-nom">Nom</label>
+          <ion-input id="reg-nom" formControlName="nom" required class="field-card__input"></ion-input>
+        </div>
+      </div>
 
-      <ion-item>
-        <ion-input label="Nom" labelPlacement="floating" formControlName="nom" required></ion-input>
-      </ion-item>
-
-      <ion-item>
+      <div class="field-card">
+        <label class="field-card__label" for="reg-email">Email</label>
         <ion-input
-          label="Email"
-          labelPlacement="floating"
+          id="reg-email"
           type="email"
           autocomplete="email"
           formControlName="email"
           required
+          class="field-card__input"
         ></ion-input>
-      </ion-item>
+      </div>
 
-      <ion-item>
+      <div class="field-card field-card--password">
+        <label class="field-card__label" for="reg-password">Mot de passe</label>
         <ion-input
-          label="Mot de passe"
-          labelPlacement="floating"
+          id="reg-password"
           [type]="showPassword ? 'text' : 'password'"
           autocomplete="new-password"
           formControlName="motDePasse"
           required
+          class="field-card__input"
         ></ion-input>
         <button
           type="button"
-          slot="end"
           class="password-toggle"
           [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
           (click)="toggleShowPassword()"
@@ -54,7 +64,7 @@
             aria-hidden="true"
           ></ion-icon>
         </button>
-      </ion-item>
+      </div>
       <p class="auth-hint">Min 8 caractères, une majuscule, une minuscule et un chiffre.</p>
 
       <div class="password-strength" aria-live="polite" *ngIf="form.controls['motDePasse'].value.length > 0">
@@ -71,12 +81,11 @@
         </p>
       </div>
 
-      <ion-item lines="none" class="cgu-item">
-        <ion-checkbox formControlName="cguAcceptees" slot="start"></ion-checkbox>
-        <ion-label class="ion-text-wrap">
+      <div class="cgu-panel">
+        <ion-checkbox formControlName="cguAcceptees" class="cgu-checkbox" justify="start" labelPlacement="end">
           J'accepte les CGU et la politique de confidentialité.
-        </ion-label>
-      </ion-item>
+        </ion-checkbox>
+      </div>
 
       <ion-button type="submit" expand="block" [disabled]="submitting" class="auth-submit">
         {{ submitting ? 'Création…' : 'Créer mon compte' }}
