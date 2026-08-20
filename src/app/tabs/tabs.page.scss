@@ -3,10 +3,19 @@ ion-tab-bar {
   --color: var(--text-secondary);
   --color-selected: var(--brand-navy-800);
   border-top: 1px solid var(--surface-border);
+  height: 72px;
+  padding-bottom: env(safe-area-inset-bottom);
+  overflow: visible;
+}
+
+ion-tab-button {
+  overflow: visible;
 }
 
 // Bouton central [+] : surdimensionné, élévation supérieure (brief §4).
 .tab-button-primary {
+  overflow: visible;
+
   ion-icon {
     width: 32px;
     height: 32px;
@@ -17,10 +26,11 @@ ion-tab-bar {
     box-shadow: var(--shadow-hover);
     transform: translateY(-8px);
     font-size: 28px;
+    overflow: visible;
   }
 
   ion-label {
-    margin-top: -4px;
+    margin-top: 0;
   }
 }
 
@@ -33,13 +43,16 @@ ion-tab-bar {
   }
 
   ion-tab-bar {
+    align-self: stretch;
     order: -1;
     flex-direction: column;
     justify-content: flex-start;
+    align-items: stretch;
     gap: var(--space-100);
     width: 232px;
     height: auto;
     padding: var(--space-300) var(--space-150);
+    padding-bottom: env(safe-area-inset-bottom);
     border-top: none;
     border-right: 1px solid var(--surface-border);
   }
@@ -47,6 +60,7 @@ ion-tab-bar {
   ion-tab-button {
     flex: 0 0 auto;
     width: 100%;
+    height: auto;
     min-height: 48px;
     border-radius: var(--radius-button);
 
