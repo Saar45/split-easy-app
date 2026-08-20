@@ -1,59 +1,134 @@
 // Statistiques shell — charte tokens only. No hardcoded colors.
 
-// ---- Header section ----
-
-.stats-header {
-  margin-bottom: var(--space-300);
-}
-
-.stats-title {
-  font-family: var(--font-heading);
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--brand-navy-800);
-  margin: 0 0 var(--space-100) 0;
-  line-height: 1.2;
-}
-
 .stats-subtitle {
   font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin: 0;
-  line-height: 1.5;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin: 0 0 var(--space-150);
 }
 
 // ---- Period segment ----
 
 .period-segment {
-  margin-bottom: var(--space-300);
-  --background: var(--surface-cream);
-  --color: var(--text-secondary);
+  margin-bottom: var(--space-200);
+  --background: #EFEBDD;
+  --color: #8A8272;
   --color-checked: var(--brand-navy-800);
-  --indicator-color: var(--brand-navy-800);
-  border-radius: var(--radius-button);
+  --indicator-color: transparent;
+  border-radius: 11px;
+  padding: 4px;
+
+  ion-segment-button {
+    --background-checked: var(--surface-white);
+    --border-radius: 8px;
+    min-height: 34px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: none;
+  }
 }
 
 // ---- Chart card ----
 
 .chart-card {
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-rest);
-  margin-bottom: var(--space-300);
+  border-radius: var(--radius-card-lg);
+  margin: 0 0 13px;
   --background: var(--surface-white);
+
+  ion-card-header {
+    padding-bottom: 0;
+  }
 }
 
-.chart-card-title {
-  font-family: var(--font-body);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
+.chart-caption {
+  margin: 0;
+}
+
+.doughnut-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
 
 .chart-wrapper {
   position: relative;
   width: 100%;
-  height: 220px;
+  height: 200px;
+
+  &--doughnut {
+    width: 132px;
+    height: 132px;
+    flex-shrink: 0;
+  }
+}
+
+.doughnut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+
+  &__value {
+    font-family: var(--font-heading);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--brand-navy-800);
+  }
+
+  &__label {
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+  }
+}
+
+.chart-legend {
+  flex: 1;
+  min-width: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__pct {
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+  }
 }
 
 .chart-empty {
@@ -97,7 +172,7 @@
 }
 
 .state-banner--error {
-  background: var(--surface-cream);
+  background: var(--surface-error-tint);
   color: var(--color-error);
 }
 
@@ -112,47 +187,47 @@
 // ---- Categories card ----
 
 .categories-card {
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-rest);
-  margin-bottom: var(--space-300);
+  border-radius: var(--radius-card-lg);
+  margin: 0 0 13px;
   --background: var(--surface-white);
-}
 
-.categories-card-title {
-  font-family: var(--font-body);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
+  ion-card-header {
+    padding-bottom: 0;
+  }
 }
 
 .category-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 var(--space-150) 0;
+  margin: var(--space-150) 0 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-150);
+  gap: 11px;
 }
 
 .category-row {
   display: flex;
   align-items: center;
-  gap: var(--space-100);
+  gap: 11px;
 }
 
 .category-label {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 12.5px;
+  font-weight: 600;
   color: var(--text-primary);
-  min-width: 90px;
+  width: 74px;
   flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .category-bar-track {
   flex: 1;
-  height: 6px;
-  background: var(--surface-cream);
-  border-radius: var(--radius-pill);
+  height: 7px;
+  background: var(--track);
+  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -160,15 +235,15 @@
   height: 100%;
   width: 0%;
   background: var(--brand-navy-500);
-  border-radius: var(--radius-pill);
+  border-radius: 4px;
 }
 
 .category-amount {
-  font-family: var(--font-body);
-  font-size: 14px;
+  font-family: var(--font-heading);
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
-  min-width: 72px;
+  width: 62px;
   text-align: right;
   flex-shrink: 0;
 }
@@ -178,40 +253,54 @@
 .summary-row {
   display: flex;
   flex-direction: row;
-  gap: var(--space-150);
-  margin-bottom: var(--space-300);
+  gap: 9px;
 }
 
 .summary-card {
   flex: 1;
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-rest);
-  --background: var(--surface-white);
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-050);
+  padding: 13px 13px 12px;
+  background: var(--surface-white);
+  border: 1px solid #E8E3D6;
+  border-radius: 13px;
+  text-align: center;
 
-  ion-card-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-050);
-    padding: var(--space-150) var(--space-100);
-    text-align: center;
+  &--navy {
+    background: var(--brand-navy-800);
+    border-color: var(--brand-navy-800);
+
+    .summary-value {
+      color: #F3EEDD;
+    }
+
+    .summary-label {
+      color: rgba(236, 231, 209, 0.62);
+    }
+  }
+
+  &--cream {
+    background: var(--surface-cream);
+    border-color: var(--surface-sand);
   }
 }
 
 .summary-value {
-  font-family: var(--font-body);
-  font-size: 18px;
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 600;
   color: var(--brand-navy-800);
   text-align: center;
-  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .summary-label {
   font-family: var(--font-body);
-  font-size: 11px;
-  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
   line-height: 1.3;
   text-align: center;
 }

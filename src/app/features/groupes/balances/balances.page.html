@@ -29,12 +29,13 @@
       [class.personal-balance--settled]="isSettled()"
       aria-live="polite"
     >
+      <div class="personal-balance__texture" aria-hidden="true"></div>
       <p class="personal-balance__caption">Ton solde dans ce groupe</p>
-      <p class="personal-balance__line amount" *ngIf="isMyDebt()">
-        Tu dois {{ formatAbs(mySolde()!) }} au total
+      <p class="personal-balance__line" *ngIf="isMyDebt()">
+        Tu dois <span class="amount">{{ formatAbs(mySolde()!) }}</span> au total
       </p>
-      <p class="personal-balance__line amount" *ngIf="isMyCredit()">
-        On te doit {{ formatAbs(mySolde()!) }} au total
+      <p class="personal-balance__line" *ngIf="isMyCredit()">
+        On te doit <span class="amount">{{ formatAbs(mySolde()!) }}</span> au total
       </p>
       <p class="personal-balance__line" *ngIf="isSettled()">Tu es à jour</p>
       <p class="personal-balance__sub" *ngIf="isMyDebt() && myDebts().length > 0">
@@ -49,24 +50,24 @@
     <section class="section" *ngIf="myDebts().length > 0">
       <h2 class="section-caption">Tes dettes</h2>
       <ul class="plain-list">
-        <li class="row-card" *ngFor="let r of myDebts()">
-          <span class="avatar" aria-hidden="true">{{ initialOf(r.to.prenom) }}</span>
-          <span class="row-card__info">
-            <span class="row-card__title">Tu dois à {{ r.to.prenom }}</span>
-            <span class="row-card__amount amount negative">{{ formatAbs(r.montant) }}</span>
+        <li class="balance-row" *ngFor="let r of myDebts()">
+          <span class="avatar balance-row__avatar" aria-hidden="true">{{ initialOf(r.to.prenom) }}</span>
+          <span class="balance-row__info">
+            <span class="balance-row__title">Tu dois à {{ r.to.prenom }}</span>
+            <span class="balance-row__amount amount negative">{{ formatAbs(r.montant) }}</span>
           </span>
-          <ion-badge *ngIf="hasPendingWith(currentUserId, r.to.id)" class="pending-badge">
+          <span *ngIf="hasPendingWith(currentUserId, r.to.id)" class="badge badge--warning">
             En attente
-          </ion-badge>
-          <ion-button
+          </span>
+          <button
             *ngIf="!hasPendingWith(currentUserId, r.to.id)"
-            size="small"
-            class="pay-btn"
+            type="button"
+            class="balance-row__pay"
             (click)="confirmPropose(r)"
             [attr.aria-label]="'Rembourser ' + formatAbs(r.montant) + ' à ' + fullName(r.to)"
           >
             Rembourser
-          </ion-button>
+          </button>
         </li>
       </ul>
     </section>
@@ -75,15 +76,15 @@
     <section class="section" *ngIf="myCredits().length > 0">
       <h2 class="section-caption">On te doit</h2>
       <ul class="plain-list">
-        <li class="row-card" *ngFor="let r of myCredits()">
-          <span class="avatar" aria-hidden="true">{{ initialOf(r.from.prenom) }}</span>
-          <span class="row-card__info">
-            <span class="row-card__title">{{ r.from.prenom }} te doit</span>
-            <span class="row-card__amount amount positive">{{ formatAbs(r.montant) }}</span>
+        <li class="balance-row" *ngFor="let r of myCredits()">
+          <span class="avatar balance-row__avatar" aria-hidden="true">{{ initialOf(r.from.prenom) }}</span>
+          <span class="balance-row__info">
+            <span class="balance-row__title">{{ r.from.prenom }} te doit</span>
+            <span class="balance-row__amount amount positive">{{ formatAbs(r.montant) }}</span>
           </span>
-          <ion-badge *ngIf="hasPendingWith(r.from.id, currentUserId)" class="pending-badge">
+          <span *ngIf="hasPendingWith(r.from.id, currentUserId)" class="badge badge--warning">
             En attente
-          </ion-badge>
+          </span>
         </li>
       </ul>
     </section>
@@ -95,7 +96,10 @@
 
     <!-- Plan optimisé : vitrine de l'algorithme greedy F5 -->
     <section class="plan-card section" *ngIf="stats">
-      <h2 class="section-caption plan-card__caption">Plan optimisé</h2>
+      <div class="plan-card__caption">
+        <ion-icon name="flash" aria-hidden="true"></ion-icon>
+        Plan optimisé
+      </div>
       <p class="plan-card__title">Simplification des dettes</p>
       <p class="plan-card__text" *ngIf="stats.reduced">L'algorithme a réduit les transactions :</p>
       <p class="plan-card__text" *ngIf="!stats.reduced">Le plan est déjà minimal :</p>

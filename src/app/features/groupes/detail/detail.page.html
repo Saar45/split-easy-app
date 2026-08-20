@@ -30,16 +30,15 @@
       <span class="members-count">
         {{ acceptedMembers().length }} {{ acceptedMembers().length > 1 ? 'participants' : 'participant' }}
       </span>
-      <ion-button
+      <button
         *ngIf="isCreator()"
-        fill="clear"
-        size="small"
+        type="button"
         class="invite-toggle"
         (click)="toggleInvite()"
         aria-label="Inviter un membre"
       >
-        + Inviter
-      </ion-button>
+        <ion-icon name="add" aria-hidden="true"></ion-icon> Inviter
+      </button>
     </div>
 
     <ion-spinner *ngIf="loadingMembers" name="crescent" class="members-spinner" aria-label="Chargement des membres"></ion-spinner>
@@ -94,17 +93,14 @@
     <!-- Invitations en attente -->
     <div *ngIf="!loadingMembers && !membersError && pendingMembers().length > 0" class="pending-section">
       <h3 class="section-caption">Invitations en attente</h3>
-      <ion-list>
-        <ion-item *ngFor="let m of pendingMembers()" class="member-item member-item--pending">
-          <ion-label>
-            <h3 class="member-item__name">{{ m.prenom }} {{ m.nom }}</h3>
-            <p class="member-item__email">{{ m.email }}</p>
-          </ion-label>
-          <ion-badge slot="end" color="warning" class="member-item__badge">
-            En attente
-          </ion-badge>
-        </ion-item>
-      </ion-list>
+      <div class="member-item member-item--pending" *ngFor="let m of pendingMembers()">
+        <span class="member-item__icon" aria-hidden="true"><ion-icon name="hourglass-outline"></ion-icon></span>
+        <div class="member-item__info">
+          <p class="member-item__name">{{ m.prenom }} {{ m.nom }}</p>
+          <p class="member-item__email">{{ m.email }}</p>
+        </div>
+        <span class="badge badge--warning">En attente</span>
+      </div>
     </div>
 
     <!-- Alerte de dette (uniquement si débiteur) -->
@@ -145,22 +141,22 @@
           Impossible de charger les dépenses.
         </div>
 
-        <ng-container *ngIf="!expensesError && expenses.length > 0">
+        <div class="expenses-card" *ngIf="!expensesError && expenses.length > 0">
           <button
             type="button"
-            class="row-card"
+            class="expenses-card__row"
             *ngFor="let e of visibleExpenses()"
             (click)="navigateToExpense(e)"
             [attr.aria-label]="e.description + ', ' + formatAmount(e.montant)"
           >
-            <span class="avatar" aria-hidden="true">{{ initialOf(e.payeur.prenom) }}</span>
-            <span class="row-card__info">
-              <span class="row-card__title">{{ e.description }}</span>
-              <span class="row-card__meta">
+            <span class="avatar expenses-card__avatar" aria-hidden="true">{{ initialOf(e.payeur.prenom) }}</span>
+            <span class="expenses-card__info">
+              <span class="expenses-card__title">{{ e.description }}</span>
+              <span class="expenses-card__meta">
                 Payé par {{ e.payeur.prenom }} · {{ e.date_depense | timeAgo }}
               </span>
             </span>
-            <span class="row-card__amount amount">{{ formatAmount(e.montant) }}</span>
+            <span class="expenses-card__amount amount">{{ formatAmount(e.montant) }}</span>
           </button>
 
           <button
@@ -172,7 +168,7 @@
           >
             Voir tout l'historique →
           </button>
-        </ng-container>
+        </div>
 
         <div *ngIf="!expensesError && expenses.length === 0" class="empty-expenses" role="status">
           <ion-icon name="receipt-outline" class="empty-icon" aria-hidden="true"></ion-icon>
@@ -201,7 +197,7 @@
           <span class="stats-tile__label">Moy/pers</span>
           <span class="stats-tile__value amount">{{ formatAmount(averagePerPerson()!) }}</span>
         </div>
-        <div class="stats-tile">
+        <div class="stats-tile stats-tile--count">
           <span class="stats-tile__label">Dépenses</span>
           <span class="stats-tile__value amount">{{ expenses.length }}</span>
         </div>
@@ -209,15 +205,15 @@
     </section>
 
     <!-- TODO: expose `role` in GET /api/groups/{id} response to restrict delete to creator -->
-    <ion-button
-      expand="block"
-      color="danger"
+    <button
+      type="button"
+      class="delete-btn"
       (click)="confirmDelete()"
       [disabled]="deleting"
-      class="delete-btn"
       aria-label="Supprimer le groupe"
     >
+      <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
       {{ deleting ? 'Suppression…' : 'Supprimer le groupe' }}
-    </ion-button>
+    </button>
   </ng-container>
 </ion-content>

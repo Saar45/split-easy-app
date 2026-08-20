@@ -15,51 +15,69 @@
   color: var(--color-error);
 }
 
-// Zone solde personnel : terracotta clair débiteur, vert clair créditeur
+// Zone solde personnel : panneau navy (maquette §06)
 .personal-balance {
-  padding: var(--space-200);
-  margin-bottom: var(--space-300);
-  background: var(--surface-error-tint);
-  border: 2px solid var(--color-error);
-  border-radius: var(--radius-card);
+  position: relative;
+  overflow: hidden;
+  padding: 19px 20px 18px;
+  margin-bottom: 13px;
+  background: var(--brand-navy-800);
+  border-radius: var(--radius-hero);
+  box-shadow: 0 14px 30px rgba(30, 42, 74, 0.26);
+
+  &__texture {
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(122deg, rgba(240, 176, 166, 0.06) 0 1px, transparent 1px 12px);
+  }
 
   &__caption {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-secondary);
+    position: relative;
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    color: rgba(236, 231, 209, 0.66);
     margin: 0 0 var(--space-100);
   }
 
   &__line {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--color-error);
+    position: relative;
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--surface-cream);
     margin: 0 0 var(--space-050);
+
+    .amount {
+      font-size: 36px;
+      letter-spacing: -0.6px;
+      color: var(--color-error-ondark);
+    }
   }
 
   &__sub {
-    font-size: 13px;
-    color: var(--text-secondary);
+    position: relative;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    color: rgba(236, 231, 209, 0.62);
     margin: 0;
   }
 
   &--credit {
-    background: var(--surface-success-tint);
-    border-color: var(--color-success);
+    .personal-balance__texture {
+      background-image: repeating-linear-gradient(122deg, rgba(143, 206, 147, 0.06) 0 1px, transparent 1px 12px);
+    }
 
-    .personal-balance__line {
-      color: var(--color-success);
+    .personal-balance__line .amount {
+      color: var(--color-success-ondark);
     }
   }
 
   &--settled {
-    background: var(--surface-white);
-    border-color: var(--surface-border);
-
-    .personal-balance__line {
-      color: var(--text-primary);
+    .personal-balance__line .amount {
+      color: var(--surface-cream);
     }
   }
 }
@@ -70,43 +88,95 @@
   margin: 0;
 }
 
-// Badge "En attente" : fond sage décoratif, texte sage-700 accessible
-.pending-badge {
-  --background: var(--surface-sage-tint);
-  --color: var(--brand-sage-700);
-  border: 1px solid var(--brand-sage-400);
-  border-radius: var(--radius-badge);
-  font-weight: 600;
-}
+// Rangée dette / créance : montant sous le titre
+.balance-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-150);
+  background: var(--surface-white);
+  border: 1px solid #E8E3D6;
+  border-radius: 13px;
+  padding: 12px 13px;
+  margin-bottom: var(--space-100);
+  box-shadow: 0 2px 4px hsla(30, 20%, 20%, 0.05);
 
-.pay-btn {
-  --background: var(--brand-navy-800);
-  --border-radius: var(--radius-button);
-  min-height: 44px;
-  margin: 0;
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__title {
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  &__amount {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  &__pay {
+    height: 35px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 9px;
+    background: var(--brand-navy-800);
+    color: var(--surface-white);
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 700;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
 }
 
 // Carte plan optimisé : fond vert clair, comparaison avant/après
 .plan-card {
-  padding: var(--space-200);
+  padding: 16px;
   background: var(--surface-success-tint);
-  border: 1px solid var(--color-success);
-  border-radius: var(--radius-card);
+  border: 1px solid #D6E5D7;
+  border-radius: 15px;
 
   &__caption {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--color-success);
+    margin: 0 0 var(--space-100);
+
+    ion-icon {
+      font-size: 13px;
+    }
   }
 
   &__title {
     font-family: var(--font-heading);
-    font-size: 17px;
+    font-size: 16.5px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--brand-navy-800);
     margin: 0 0 var(--space-050);
   }
 
   &__text {
-    font-size: 13px;
+    font-family: var(--font-body);
+    font-size: 12.5px;
     color: var(--text-secondary);
     margin: 0 0 var(--space-150);
   }
@@ -114,7 +184,7 @@
   &__compare {
     display: flex;
     align-items: center;
-    gap: var(--space-150);
+    gap: 12px;
   }
 
   &__box {
@@ -125,33 +195,40 @@
     gap: var(--space-050);
     padding: var(--space-150);
     background: var(--surface-white);
-    border: 1px solid var(--surface-border);
-    border-radius: var(--radius-button);
+    border: 1px solid #DDE7DD;
+    border-radius: 11px;
 
     &--after {
-      border-color: var(--color-success);
+      background: var(--brand-navy-800);
+      border-color: var(--brand-navy-800);
     }
   }
 
   &__box-label {
-    font-size: 12px;
+    font-family: var(--font-body);
+    font-size: 11px;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
 
+  &__box--after &__box-label {
+    color: rgba(236, 231, 209, 0.66);
+  }
+
   &__box-value {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-secondary);
   }
 
   &__box--after &__box-value {
-    color: var(--color-success);
+    color: var(--color-success-ondark);
   }
 
   &__arrow {
-    font-size: 24px;
+    font-size: 20px;
     color: var(--color-success);
     flex-shrink: 0;
   }
@@ -162,12 +239,13 @@
   display: flex;
   align-items: center;
   gap: var(--space-100);
-  min-height: 48px;
-  padding: var(--space-100) var(--space-150);
-  margin-bottom: var(--space-100);
-  background: var(--surface-white);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-rest);
+  min-height: 44px;
+  padding: var(--space-150) 0;
+  border-bottom: 1px solid var(--hairline-strong);
+
+  &:last-child {
+    border-bottom: none;
+  }
 
   &__check {
     font-size: 20px;
@@ -177,13 +255,15 @@
 
   &__who {
     flex: 1;
-    font-size: 14px;
-    font-weight: 500;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
     color: var(--text-primary);
   }
 
   &__detail {
-    font-size: 13px;
+    font-family: var(--font-heading);
+    font-size: 13.5px;
     font-weight: 600;
     color: var(--text-secondary);
   }
@@ -193,17 +273,20 @@
   padding: var(--space-200);
   margin-bottom: var(--space-300);
   text-align: center;
-  color: var(--text-secondary);
-  background: var(--surface-cream);
-  border-radius: var(--radius-card);
+  color: var(--brand-sage-700);
+  background: var(--surface-sage-tint);
+  border: 1px solid #DFE4D6;
+  border-radius: var(--radius-tile);
 }
 
 .success-block {
-  color: var(--brand-sage-700);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-100);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
 
   ion-icon {
     font-size: 18px;

@@ -39,8 +39,17 @@ export class StatistiquesPage implements OnInit {
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
-      x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 7 } },
-      y: { beginAtZero: true },
+      x: {
+        ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 7, color: '#B0AA9C', font: { size: 10, weight: 600 } },
+        grid: { color: '#F1EEE3' },
+        border: { display: false },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: { color: '#B0AA9C', font: { size: 10, weight: 600 } },
+        grid: { color: '#F1EEE3' },
+        border: { display: false },
+      },
     },
   };
 
@@ -59,6 +68,13 @@ export class StatistiquesPage implements OnInit {
     }
     this.selectedPeriod = p;
     this.fetch();
+  }
+
+  // Légende texte au centre du doughnut ("€ ce mois" / "€ cette semaine" / "€ cette année").
+  periodLabel(): string {
+    return ({ semaine: 'cette semaine', mois: 'ce mois', annee: 'cette année' } as Record<string, string>)[
+      this.selectedPeriod
+    ];
   }
 
   formatMontant(montant: string | null | undefined): string {
@@ -117,6 +133,8 @@ export class StatistiquesPage implements OnInit {
           tension: 0.25,
           pointRadius: 2,
           pointHoverRadius: 4,
+          pointBackgroundColor: '#C4B882',
+          pointBorderColor: '#1E2A4A',
         },
       ],
     };
