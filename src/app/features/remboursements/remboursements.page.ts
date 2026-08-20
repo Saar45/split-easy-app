@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { RemboursementService } from '../../core/services/remboursement.service';
 import { AuthService } from '../../core/services/auth.service';
+import { GroupService } from '../../core/services/group.service';
 import { Remboursement } from '../../core/models/remboursement.model';
 
 @Component({
@@ -15,6 +16,7 @@ import { Remboursement } from '../../core/models/remboursement.model';
 export class RemboursementsPage implements OnInit {
   private readonly service = inject(RemboursementService);
   private readonly authService = inject(AuthService);
+  private readonly groupService = inject(GroupService);
   private readonly alert = inject(AlertController);
   private readonly toast = inject(ToastController);
 
@@ -23,6 +25,9 @@ export class RemboursementsPage implements OnInit {
   list: Remboursement[] = [];
   currentUserId = 0;
   tab: 'en_cours' | 'historique' = 'en_cours';
+  // Résolution client du nom de groupe pour la ligne meta (README §08) : pas de nouvel appel API,
+  // GroupService.list() est déjà utilisé ailleurs dans l'app.
+  private groupNames = new Map<number, string>();
 
   private readonly amountFormatter = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -40,6 +45,10 @@ export class RemboursementsPage implements OnInit {
       }
     }
     this.currentUserId = u?.id ?? 0;
+    this.groupService.list().subscribe({
+      next: (groups) => (this.groupNames = new Map(groups.map((g) => [g.id, g.nom]))),
+      error: () => (this.groupNames = new Map()),
+    });
     this.load();
   }
 
@@ -91,6 +100,11 @@ export class RemboursementsPage implements OnInit {
 
   fullName(u: { prenom: string; nom: string }): string {
     return `${u.prenom} ${u.nom}`.trim();
+  }
+
+  // Nom de groupe résolu localement ; chaîne vide si les groupes n'ont pas pu être chargés.
+  groupName(rb: Remboursement): string {
+    return this.groupNames.get(rb.groupe_id) ?? '';
   }
 
   statutLabel(s: string): string {

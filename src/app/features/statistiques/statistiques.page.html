@@ -1,15 +1,12 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Statistiques</ion-title>
+    <ion-title>Tes dépenses</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <section class="stats-header">
-    <h1 class="stats-title">Tes dépenses</h1>
-    <p class="stats-subtitle">Visualise tes dépenses sur la période sélectionnée.</p>
-  </section>
+  <p class="stats-subtitle">Visualise tes dépenses sur la période sélectionnée.</p>
 
   <ion-segment
     class="period-segment"
@@ -40,17 +37,30 @@
   <!-- Doughnut chart : répartition par catégorie -->
   <ion-card class="chart-card" *ngIf="!loading && stats">
     <ion-card-header>
-      <ion-card-title class="chart-card-title">Répartition par catégorie</ion-card-title>
+      <p class="section-caption chart-caption">Répartition par catégorie</p>
     </ion-card-header>
     <ion-card-content>
-      <div class="chart-wrapper" *ngIf="(doughnutData.datasets[0]?.data?.length ?? 0) > 0; else emptyChart">
-        <canvas
-          baseChart
-          [type]="'doughnut'"
-          [data]="doughnutData"
-          [options]="doughnutOptions"
-          aria-label="Graphique en anneau de la répartition par catégorie"
-        ></canvas>
+      <div class="doughnut-row" *ngIf="(doughnutData.datasets[0]?.data?.length ?? 0) > 0; else emptyChart">
+        <div class="chart-wrapper chart-wrapper--doughnut">
+          <canvas
+            baseChart
+            [type]="'doughnut'"
+            [data]="doughnutData"
+            [options]="doughnutOptions"
+            aria-label="Graphique en anneau de la répartition par catégorie"
+          ></canvas>
+          <div class="doughnut-center" aria-hidden="true">
+            <span class="doughnut-center__value amount">{{ formatMontant(stats.total_depense) }}</span>
+            <span class="doughnut-center__label">€ {{ periodLabel() }}</span>
+          </div>
+        </div>
+        <ul class="chart-legend">
+          <li class="chart-legend__item" *ngFor="let cat of stats.par_categorie">
+            <span class="chart-legend__swatch" [style.background]="cat.couleur || 'var(--brand-navy-500)'"></span>
+            <span class="chart-legend__name">{{ cat.nom }}</span>
+            <span class="chart-legend__pct">{{ cat.pourcentage }} %</span>
+          </li>
+        </ul>
       </div>
       <ng-template #emptyChart>
         <div class="chart-empty">
@@ -64,7 +74,7 @@
   <!-- Line chart : évolution -->
   <ion-card class="chart-card" *ngIf="!loading && stats">
     <ion-card-header>
-      <ion-card-title class="chart-card-title">Évolution</ion-card-title>
+      <p class="section-caption chart-caption">Évolution</p>
     </ion-card-header>
     <ion-card-content>
       <div class="chart-wrapper">
@@ -82,7 +92,7 @@
   <!-- Par catégorie : détail avec barres -->
   <ion-card class="categories-card" *ngIf="!loading && stats">
     <ion-card-header>
-      <ion-card-title class="categories-card-title">Par catégorie</ion-card-title>
+      <p class="section-caption chart-caption">Par catégorie</p>
     </ion-card-header>
     <ion-card-content>
       <ul class="category-list" aria-label="Répartition par catégorie" *ngIf="stats.par_categorie.length > 0; else emptyCats">
@@ -114,26 +124,20 @@
   <!-- Cartes résumé -->
   <div class="summary-row" role="list" aria-label="Résumé de la période" *ngIf="!loading && stats">
 
-    <ion-card class="summary-card" role="listitem">
-      <ion-card-content>
-        <span class="summary-value amount">{{ formatMontant(stats.total_depense) }}</span>
-        <span class="summary-label">Total dépensé</span>
-      </ion-card-content>
-    </ion-card>
+    <div class="summary-card summary-card--navy" role="listitem">
+      <span class="summary-value amount">{{ formatMontant(stats.total_depense) }}</span>
+      <span class="summary-label">Total dépensé</span>
+    </div>
 
-    <ion-card class="summary-card" role="listitem">
-      <ion-card-content>
-        <span class="summary-value amount">{{ formatMontant(stats.moyenne_par_jour) }}</span>
-        <span class="summary-label">Moyenne / jour</span>
-      </ion-card-content>
-    </ion-card>
+    <div class="summary-card" role="listitem">
+      <span class="summary-value amount">{{ formatMontant(stats.moyenne_par_jour) }}</span>
+      <span class="summary-label">Moyenne / jour</span>
+    </div>
 
-    <ion-card class="summary-card" role="listitem">
-      <ion-card-content>
-        <span class="summary-value amount">{{ stats.categorie_principale ? stats.categorie_principale.nom : '—' }}</span>
-        <span class="summary-label">Catégorie principale</span>
-      </ion-card-content>
-    </ion-card>
+    <div class="summary-card summary-card--cream" role="listitem">
+      <span class="summary-value amount">{{ stats.categorie_principale ? stats.categorie_principale.nom : '—' }}</span>
+      <span class="summary-label">Cat. principale</span>
+    </div>
 
   </div>
 
