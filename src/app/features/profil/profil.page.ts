@@ -6,6 +6,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { ProfileService } from '../../core/services/profile.service';
 import { GroupService } from '../../core/services/group.service';
 import { UserPreferences } from '../../core/models/preferences.model';
+import { APP_VERSION } from '../../core/version';
 
 @Component({
   selector: 'app-profil',
@@ -22,6 +23,7 @@ export class ProfilPage implements OnInit {
   private readonly router = inject(Router);
 
   readonly user$ = this.auth.user$;
+  readonly appVersion = APP_VERSION;
 
   preferences: UserPreferences | null = null;
   loading = true;
