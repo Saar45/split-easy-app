@@ -8,6 +8,7 @@ import { ExpenseService } from '../../../core/services/expense.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { InvitationService } from '../../../core/services/invitation.service';
 import { CategoryService } from '../../../core/services/category.service';
+import { resolveCategoryIcon } from '../../../core/services/category-icon';
 import { Categorie } from '../../../core/models/categorie.model';
 import { CreateExpensePayload, SplitMode } from '../../../core/models/expense.model';
 import { GroupMember } from '../../../core/models/invitation.model';
@@ -33,6 +34,7 @@ export class AddExpensePage implements OnInit {
 
   categories: Categorie[] = [];
   scanning = false;
+  readonly resolveCategoryIcon = resolveCategoryIcon;
   // Le payeur est toujours l'utilisateur courant (contrainte API).
   payerName = '';
 
