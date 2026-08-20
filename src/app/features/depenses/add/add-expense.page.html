@@ -118,7 +118,7 @@
           [attr.aria-label]="cat.libelle"
           class="category-chip"
         >
-          <ion-icon [name]="cat.icone" class="chip-icon" aria-hidden="true"></ion-icon>
+          <ion-icon [name]="resolveCategoryIcon(cat.icone)" class="chip-icon" aria-hidden="true"></ion-icon>
           <ion-label>{{ cat.libelle }}</ion-label>
         </ion-chip>
       </div>
