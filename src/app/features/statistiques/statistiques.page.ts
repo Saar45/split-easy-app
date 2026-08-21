@@ -83,7 +83,7 @@ export class StatistiquesPage implements OnInit {
     }
     const num = Number(montant);
     if (!Number.isFinite(num)) {
-      return '— €';
+      return '- €';
     }
     return `${this.montantFormatter.format(num)} €`;
   }
